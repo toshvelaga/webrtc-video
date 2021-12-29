@@ -108,18 +108,15 @@ const Video = (props) => {
   }
 
   const getUserMedia = () => {
-    if (
-      (this.state.video && this.videoAvailable) ||
-      (this.state.audio && this.audioAvailable)
-    ) {
+    if ((video && videoAvailable) || (audio && audioAvailable)) {
       navigator.mediaDevices
         .getUserMedia({ video: this.state.video, audio: this.state.audio })
-        .then(this.getUserMediaSuccess)
+        .then(getUserMediaSuccess)
         .then((stream) => {})
         .catch((e) => console.log(e))
     } else {
       try {
-        let tracks = this.localVideoref.current.srcObject.getTracks()
+        let tracks = localVideoref.current.srcObject.getTracks()
         tracks.forEach((track) => track.stop())
       } catch (e) {}
     }
@@ -133,7 +130,7 @@ const Video = (props) => {
     }
 
     window.localStream = stream
-    this.localVideoref.current.srcObject = stream
+    localVideoref.current.srcObject = stream
 
     for (let id in connections) {
       if (id === socketId) continue
@@ -164,16 +161,16 @@ const Video = (props) => {
             },
             () => {
               try {
-                let tracks = this.localVideoref.current.srcObject.getTracks()
+                let tracks = localVideoref.current.srcObject.getTracks()
                 tracks.forEach((track) => track.stop())
               } catch (e) {
                 console.log(e)
               }
 
               let blackSilence = (...args) =>
-                new MediaStream([this.black(...args), this.silence()])
+                new MediaStream([black(...args), silence()])
               window.localStream = blackSilence()
-              this.localVideoref.current.srcObject = window.localStream
+              localVideoref.current.srcObject = window.localStream
 
               for (let id in connections) {
                 connections[id].addStream(window.localStream)
@@ -200,7 +197,7 @@ const Video = (props) => {
   }
 
   const getDislayMedia = () => {
-    if (this.state.screen) {
+    if (screen) {
       if (navigator.mediaDevices.getDisplayMedia) {
         navigator.mediaDevices
           .getDisplayMedia({ video: true, audio: true })
@@ -219,7 +216,7 @@ const Video = (props) => {
     }
 
     window.localStream = stream
-    this.localVideoref.current.srcObject = stream
+    localVideoref.current.srcObject = stream
 
     for (let id in connections) {
       if (id === socketId) continue
@@ -249,18 +246,18 @@ const Video = (props) => {
             },
             () => {
               try {
-                let tracks = this.localVideoref.current.srcObject.getTracks()
+                let tracks = localVideoref.current.srcObject.getTracks()
                 tracks.forEach((track) => track.stop())
               } catch (e) {
                 console.log(e)
               }
 
               let blackSilence = (...args) =>
-                new MediaStream([this.black(...args), this.silence()])
+                new MediaStream([black(...args), silence()])
               window.localStream = blackSilence()
-              this.localVideoref.current.srcObject = window.localStream
+              localVideoref.current.srcObject = window.localStream
 
-              this.getUserMedia()
+              getUserMedia()
             }
           )
         })
@@ -343,7 +340,7 @@ const Video = (props) => {
   const connectToSocketServer = () => {
     socket = io.connect(server_url, { secure: true })
 
-    socket.on('signal', this.gotMessageFromServer)
+    socket.on('signal', gotMessageFromServer)
 
     socket.on('connect', () => {
       socket.emit('join-call', window.location.href)
@@ -356,7 +353,7 @@ const Video = (props) => {
           video.parentNode.removeChild(video)
 
           let main = document.getElementById('main')
-          this.changeCssVideos(main)
+          changeCssVideos(main)
         }
       })
 
@@ -388,7 +385,7 @@ const Video = (props) => {
             } else {
               elms = clients.length
               let main = document.getElementById('main')
-              let cssMesure = this.changeCssVideos(main)
+              let cssMesure = changeCssVideos(main)
 
               let video = document.createElement('video')
 
@@ -419,7 +416,7 @@ const Video = (props) => {
             connections[socketListId].addStream(window.localStream)
           } else {
             let blackSilence = (...args) =>
-              new MediaStream([this.black(...args), this.silence()])
+              new MediaStream([black(...args), silence()])
             window.localStream = blackSilence()
             connections[socketListId].addStream(window.localStream)
           }
@@ -478,7 +475,7 @@ const Video = (props) => {
 
   const handleEndCall = () => {
     try {
-      let tracks = this.localVideoref.current.srcObject.getTracks()
+      let tracks = localVideoref.current.srcObject.getTracks()
       tracks.forEach((track) => track.stop())
     } catch (e) {}
     window.location.href = '/'
@@ -596,10 +593,7 @@ const Video = (props) => {
             </IconButton>
 
             {screenAvailable === true ? (
-              <IconButton
-                style={{ color: '#424242' }}
-                onClick={this.handleScreen}
-              >
+              <IconButton style={{ color: '#424242' }} onClick={handleScreen}>
                 {screen === true ? (
                   <ScreenShareIcon />
                 ) : (
