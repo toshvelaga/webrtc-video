@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import io from 'socket.io-client'
 import faker from 'faker'
 
@@ -35,59 +35,56 @@ var socket = null
 var socketId = null
 var elms = 0
 
-class Video extends Component {
-  constructor(props) {
-    super(props)
+const Video = (props) => {
+  const localVideoref = useRef(null)
 
-    this.localVideoref = React.createRef()
+  let videoAvailable = false
+  let audioAvailable = false
 
-    this.videoAvailable = false
-    this.audioAvailable = false
+  const [video, setvideo] = useState(false)
+  const [audio, setaudio] = useState(false)
+  const [screen, setscreen] = useState(false)
+  const [showModal, setshowModal] = useState(false)
+  const [screenAvailable, setscreenAvailable] = useState(false)
+  const [messages, setmessages] = useState([])
+  const [message, setmessage] = useState('')
+  const [newmessages, setnewmessages] = useState(0)
+  const [askForUsername, setaskForUsername] = useState(true)
+  const [username, setusername] = useState(faker.internet.userName())
 
-    this.state = {
-      video: false,
-      audio: false,
-      screen: false,
-      showModal: false,
-      screenAvailable: false,
-      messages: [],
-      message: '',
-      newmessages: 0,
-      askForUsername: true,
-      username: faker.internet.userName(),
-    }
-    connections = {}
+  connections = {}
 
-    this.getPermissions()
-  }
+  useEffect(() => {
+    getPermissions()
+  }, [])
 
-  getPermissions = async () => {
+  const getPermissions = async () => {
     try {
       await navigator.mediaDevices
         .getUserMedia({ video: true })
-        .then(() => (this.videoAvailable = true))
-        .catch(() => (this.videoAvailable = false))
+        .then(() => (videoAvailable = true))
+        .catch(() => (videoAvailable = false))
 
       await navigator.mediaDevices
         .getUserMedia({ audio: true })
-        .then(() => (this.audioAvailable = true))
-        .catch(() => (this.audioAvailable = false))
+        .then(() => (audioAvailable = true))
+        .catch(() => (audioAvailable = false))
 
       if (navigator.mediaDevices.getDisplayMedia) {
-        this.setState({ screenAvailable: true })
+        setscreenAvailable(true)
       } else {
-        this.setState({ screenAvailable: false })
+        setscreenAvailable(false)
       }
 
-      if (this.videoAvailable || this.audioAvailable) {
+      if (videoAvailable || audioAvailable) {
         navigator.mediaDevices
           .getUserMedia({
-            video: this.videoAvailable,
-            audio: this.audioAvailable,
+            video: videoAvailable,
+            audio: audioAvailable,
           })
           .then((stream) => {
             window.localStream = stream
-            this.localVideoref.current.srcObject = stream
+            localVideoref.current.srcObject = stream
           })
           .then((stream) => {})
           .catch((e) => console.log(e))
@@ -97,7 +94,7 @@ class Video extends Component {
     }
   }
 
-  getMedia = () => {
+  const getMedia = () => {
     this.setState(
       {
         video: this.videoAvailable,
@@ -110,7 +107,7 @@ class Video extends Component {
     )
   }
 
-  getUserMedia = () => {
+  const getUserMedia = () => {
     if (
       (this.state.video && this.videoAvailable) ||
       (this.state.audio && this.audioAvailable)
@@ -128,7 +125,7 @@ class Video extends Component {
     }
   }
 
-  getUserMediaSuccess = (stream) => {
+  const getUserMediaSuccess = (stream) => {
     try {
       window.localStream.getTracks().forEach((track) => track.stop())
     } catch (e) {
@@ -202,7 +199,7 @@ class Video extends Component {
     )
   }
 
-  getDislayMedia = () => {
+  const getDislayMedia = () => {
     if (this.state.screen) {
       if (navigator.mediaDevices.getDisplayMedia) {
         navigator.mediaDevices
@@ -214,7 +211,7 @@ class Video extends Component {
     }
   }
 
-  getDislayMediaSuccess = (stream) => {
+  const getDislayMediaSuccess = (stream) => {
     try {
       window.localStream.getTracks().forEach((track) => track.stop())
     } catch (e) {
@@ -270,7 +267,7 @@ class Video extends Component {
     )
   }
 
-  gotMessageFromServer = (fromId, message) => {
+  const gotMessageFromServer = (fromId, message) => {
     var signal = JSON.parse(message)
 
     if (fromId !== socketId) {
@@ -309,7 +306,7 @@ class Video extends Component {
     }
   }
 
-  changeCssVideos = (main) => {
+  const changeCssVideos = (main) => {
     let widthMain = main.offsetWidth
     let minWidth = '30%'
     if ((widthMain * 30) / 100 < 300) {
@@ -343,7 +340,7 @@ class Video extends Component {
     return { minWidth, minHeight, width, height }
   }
 
-  connectToSocketServer = () => {
+  const connectToSocketServer = () => {
     socket = io.connect(server_url, { secure: true })
 
     socket.on('signal', this.gotMessageFromServer)
@@ -454,7 +451,7 @@ class Video extends Component {
     })
   }
 
-  silence = () => {
+  const silence = () => {
     let ctx = new AudioContext()
     let oscillator = ctx.createOscillator()
     let dst = oscillator.connect(ctx.createMediaStreamDestination())
@@ -462,7 +459,7 @@ class Video extends Component {
     ctx.resume()
     return Object.assign(dst.stream.getAudioTracks()[0], { enabled: false })
   }
-  black = ({ width = 640, height = 480 } = {}) => {
+  const black = ({ width = 640, height = 480 } = {}) => {
     let canvas = Object.assign(document.createElement('canvas'), {
       width,
       height,
@@ -472,14 +469,14 @@ class Video extends Component {
     return Object.assign(stream.getVideoTracks()[0], { enabled: false })
   }
 
-  handleVideo = () =>
+  const handleVideo = () =>
     this.setState({ video: !this.state.video }, () => this.getUserMedia())
-  handleAudio = () =>
+  const handleAudio = () =>
     this.setState({ audio: !this.state.audio }, () => this.getUserMedia())
-  handleScreen = () =>
+  const handleScreen = () =>
     this.setState({ screen: !this.state.screen }, () => this.getDislayMedia())
 
-  handleEndCall = () => {
+  const handleEndCall = () => {
     try {
       let tracks = this.localVideoref.current.srcObject.getTracks()
       tracks.forEach((track) => track.stop())
@@ -487,9 +484,9 @@ class Video extends Component {
     window.location.href = '/'
   }
 
-  handleUsername = (e) => this.setState({ username: e.target.value })
+  const handleUsername = (e) => this.setState({ username: e.target.value })
 
-  copyUrl = () => {
+  const copyUrl = () => {
     let text = window.location.href
     if (!navigator.clipboard) {
       let textArea = document.createElement('textarea')
@@ -516,176 +513,145 @@ class Video extends Component {
     )
   }
 
-  connect = () =>
+  const connect = () =>
     this.setState({ askForUsername: false }, () => this.getMedia())
 
-  render() {
-    return (
-      <div>
-        {this.state.askForUsername === true ? (
-          <div>
-            <div
-              style={{
-                background: 'white',
-                width: '30%',
-                height: 'auto',
-                padding: '20px',
-                minWidth: '400px',
-                textAlign: 'center',
-                margin: 'auto',
-                marginTop: '50px',
-                justifyContent: 'center',
-              }}
+  return (
+    <div>
+      {askForUsername === true ? (
+        <div>
+          <div
+            style={{
+              background: 'white',
+              width: '30%',
+              height: 'auto',
+              padding: '20px',
+              minWidth: '400px',
+              textAlign: 'center',
+              margin: 'auto',
+              marginTop: '50px',
+              justifyContent: 'center',
+            }}
+          >
+            <p style={{ margin: 0, fontWeight: 'bold', paddingRight: '50px' }}>
+              Set your username
+            </p>
+            <Input
+              placeholder='Username'
+              value={username}
+              onChange={(e) => handleUsername(e)}
+            />
+            <Button
+              variant='contained'
+              color='primary'
+              onClick={connect}
+              style={{ margin: '20px' }}
             >
-              <p
-                style={{ margin: 0, fontWeight: 'bold', paddingRight: '50px' }}
+              Connect
+            </Button>
+          </div>
+
+          <div
+            style={{
+              justifyContent: 'center',
+              textAlign: 'center',
+              paddingTop: '40px',
+            }}
+          >
+            <video
+              id='my-video'
+              ref={localVideoref}
+              autoPlay
+              muted
+              style={{
+                borderStyle: 'solid',
+                borderColor: '#bdbdbd',
+                objectFit: 'fill',
+                width: '60%',
+                height: '30%',
+              }}
+            ></video>
+          </div>
+        </div>
+      ) : (
+        <div>
+          <div
+            className='btn-down'
+            style={{
+              backgroundColor: 'whitesmoke',
+              color: 'whitesmoke',
+              textAlign: 'center',
+            }}
+          >
+            <IconButton style={{ color: '#424242' }} onClick={handleVideo}>
+              {video === true ? <VideocamIcon /> : <VideocamOffIcon />}
+            </IconButton>
+
+            <IconButton style={{ color: '#f44336' }} onClick={handleEndCall}>
+              <CallEndIcon />
+            </IconButton>
+
+            <IconButton style={{ color: '#424242' }} onClick={handleAudio}>
+              {audio === true ? <MicIcon /> : <MicOffIcon />}
+            </IconButton>
+
+            {screenAvailable === true ? (
+              <IconButton
+                style={{ color: '#424242' }}
+                onClick={this.handleScreen}
               >
-                Set your username
-              </p>
-              <Input
-                placeholder='Username'
-                value={this.state.username}
-                onChange={(e) => this.handleUsername(e)}
-              />
+                {screen === true ? (
+                  <ScreenShareIcon />
+                ) : (
+                  <StopScreenShareIcon />
+                )}
+              </IconButton>
+            ) : null}
+          </div>
+
+          <div className='container'>
+            <div style={{ paddingTop: '20px' }}>
+              <Input value={window.location.href} disable='true'></Input>
               <Button
-                variant='contained'
-                color='primary'
-                onClick={this.connect}
-                style={{ margin: '20px' }}
+                style={{
+                  backgroundColor: '#3f51b5',
+                  color: 'whitesmoke',
+                  marginLeft: '20px',
+                  marginTop: '10px',
+                  width: '120px',
+                  fontSize: '10px',
+                }}
+                onClick={copyUrl}
               >
-                Connect
+                Copy invite link
               </Button>
             </div>
 
-            <div
-              style={{
-                justifyContent: 'center',
-                textAlign: 'center',
-                paddingTop: '40px',
-              }}
+            <Row
+              id='main'
+              className='flex-container'
+              style={{ margin: 0, padding: 0 }}
             >
               <video
                 id='my-video'
-                ref={this.localVideoref}
+                ref={localVideoref}
                 autoPlay
                 muted
                 style={{
                   borderStyle: 'solid',
                   borderColor: '#bdbdbd',
+                  margin: '10px',
                   objectFit: 'fill',
-                  width: '60%',
-                  height: '30%',
+                  width: '100%',
+                  height: '100%',
                 }}
               ></video>
-            </div>
+            </Row>
           </div>
-        ) : (
-          <div>
-            <div
-              className='btn-down'
-              style={{
-                backgroundColor: 'whitesmoke',
-                color: 'whitesmoke',
-                textAlign: 'center',
-              }}
-            >
-              <IconButton
-                style={{ color: '#424242' }}
-                onClick={this.handleVideo}
-              >
-                {this.state.video === true ? (
-                  <VideocamIcon />
-                ) : (
-                  <VideocamOffIcon />
-                )}
-              </IconButton>
-
-              <IconButton
-                style={{ color: '#f44336' }}
-                onClick={this.handleEndCall}
-              >
-                <CallEndIcon />
-              </IconButton>
-
-              <IconButton
-                style={{ color: '#424242' }}
-                onClick={this.handleAudio}
-              >
-                {this.state.audio === true ? <MicIcon /> : <MicOffIcon />}
-              </IconButton>
-
-              {this.state.screenAvailable === true ? (
-                <IconButton
-                  style={{ color: '#424242' }}
-                  onClick={this.handleScreen}
-                >
-                  {this.state.screen === true ? (
-                    <ScreenShareIcon />
-                  ) : (
-                    <StopScreenShareIcon />
-                  )}
-                </IconButton>
-              ) : null}
-
-              <Badge
-                badgeContent={this.state.newmessages}
-                max={999}
-                color='secondary'
-                onClick={this.openChat}
-              >
-                <IconButton
-                  style={{ color: '#424242' }}
-                  onClick={this.openChat}
-                >
-                  <ChatIcon />
-                </IconButton>
-              </Badge>
-            </div>
-
-            <div className='container'>
-              <div style={{ paddingTop: '20px' }}>
-                <Input value={window.location.href} disable='true'></Input>
-                <Button
-                  style={{
-                    backgroundColor: '#3f51b5',
-                    color: 'whitesmoke',
-                    marginLeft: '20px',
-                    marginTop: '10px',
-                    width: '120px',
-                    fontSize: '10px',
-                  }}
-                  onClick={this.copyUrl}
-                >
-                  Copy invite link
-                </Button>
-              </div>
-
-              <Row
-                id='main'
-                className='flex-container'
-                style={{ margin: 0, padding: 0 }}
-              >
-                <video
-                  id='my-video'
-                  ref={this.localVideoref}
-                  autoPlay
-                  muted
-                  style={{
-                    borderStyle: 'solid',
-                    borderColor: '#bdbdbd',
-                    margin: '10px',
-                    objectFit: 'fill',
-                    width: '100%',
-                    height: '100%',
-                  }}
-                ></video>
-              </Row>
-            </div>
-          </div>
-        )}
-      </div>
-    )
-  }
+        </div>
+      )}
+    </div>
+  )
 }
 
 export default Video
