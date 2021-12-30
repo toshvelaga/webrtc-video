@@ -17,7 +17,8 @@ if (process.env.NODE_ENV === 'production') {
     res.sendFile(path.join(__dirname + '/build/index.html'))
   })
 }
-app.set('port', process.env.PORT || 4001)
+
+const PORT = process.env.PORT || 4001
 
 let connections = {}
 let timeOnline = {}
@@ -74,6 +75,6 @@ io.on('connection', (socket) => {
   })
 })
 
-server.listen(app.get('port'), () => {
-  console.log('listening on', app.get('port'))
+server.listen(PORT, () => {
+  console.log(`Listening on PORT ${PORT}`)
 })
