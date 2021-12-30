@@ -34,8 +34,9 @@ var elms = 0
 
 const Video = (props) => {
   const localVideoref = useRef(null)
+  const stream = useRef(null)
 
-  const [video, setvideo] = useState(false)
+  const [video, setvideo] = useState(true)
   const [audio, setaudio] = useState(false)
   const [screen, setscreen] = useState(false)
   const [showModal, setshowModal] = useState(false)
@@ -53,6 +54,12 @@ const Video = (props) => {
   }, [])
 
   const getPermissions = async () => {
+    stream.current = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true,
+    })
+    // stream.current.replaceVideoTrack(stream.current.getVideoTracks()[0])
+
     await navigator.mediaDevices
       .getUserMedia({
         video: true,
@@ -72,8 +79,10 @@ const Video = (props) => {
 
   const getUserMedia = () => {
     navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => getUserMediaSuccess(stream))
+      .getUserMedia({ video: video, audio: true })
+      .then((stream) => {
+        getUserMediaSuccess(stream)
+      })
       .catch((e) => console.log(e))
   }
 
@@ -146,68 +155,67 @@ const Video = (props) => {
     )
   }
 
-  //   const getDislayMedia = () => {
-  //     if (screen) {
-  //       if (navigator.mediaDevices.getDisplayMedia) {
-  //         navigator.mediaDevices
-  //           .getDisplayMedia({ video: true, audio: true })
-  //           .then(getDislayMediaSuccess)
-  //           .then((stream) => {})
-  //           .catch((e) => console.log(e))
-  //       }
-  //     }
-  //   }
+  const getDislayMedia = () => {
+    if (screen) {
+      if (navigator.mediaDevices.getDisplayMedia) {
+        navigator.mediaDevices
+          .getDisplayMedia({ video: true, audio: true })
+          .then((stream) => getDislayMediaSuccess(stream))
+          .catch((e) => console.log(e))
+      }
+    }
+  }
 
-  //   const getDislayMediaSuccess = (stream) => {
-  //     try {
-  //       window.localStream.getTracks().forEach((track) => track.stop())
-  //     } catch (e) {
-  //       console.log(e)
-  //     }
+  const getDislayMediaSuccess = (stream) => {
+    try {
+      window.localStream.getTracks().forEach((track) => track.stop())
+    } catch (e) {
+      console.log(e)
+    }
 
-  //     window.localStream = stream
-  //     localVideoref.current.srcObject = stream
+    window.localStream = stream
+    localVideoref.current.srcObject = stream
 
-  //     for (let id in connections) {
-  //       if (id === socketId) continue
+    for (let id in connections) {
+      if (id === socketId) continue
 
-  //       connections[id].addStream(window.localStream)
+      connections[id].addStream(window.localStream)
 
-  //       connections[id].createOffer().then((description) => {
-  //         connections[id]
-  //           .setLocalDescription(description)
-  //           .then(() => {
-  //             socket.emit(
-  //               'signal',
-  //               id,
-  //               JSON.stringify({ sdp: connections[id].localDescription })
-  //             )
-  //           })
-  //           .catch((e) => console.log(e))
-  //       })
-  //     }
+      connections[id].createOffer().then((description) => {
+        connections[id]
+          .setLocalDescription(description)
+          .then(() => {
+            socket.emit(
+              'signal',
+              id,
+              JSON.stringify({ sdp: connections[id].localDescription })
+            )
+          })
+          .catch((e) => console.log(e))
+      })
+    }
 
-  //     stream.getTracks().forEach(
-  //       (track) =>
-  //         (track.onended = () => {
-  //           setscreen(false)
+    stream.getTracks().forEach(
+      (track) =>
+        (track.onended = () => {
+          setscreen(false)
 
-  //           try {
-  //             let tracks = localVideoref.current.srcObject.getTracks()
-  //             tracks.forEach((track) => track.stop())
-  //           } catch (e) {
-  //             console.log(e)
-  //           }
+          try {
+            let tracks = localVideoref.current.srcObject.getTracks()
+            tracks.forEach((track) => track.stop())
+          } catch (e) {
+            console.log(e)
+          }
 
-  //           let blackSilence = (...args) =>
-  //             new MediaStream([black(...args), silence()])
-  //           window.localStream = blackSilence()
-  //           localVideoref.current.srcObject = window.localStream
+          let blackSilence = (...args) =>
+            new MediaStream([black(...args), silence()])
+          window.localStream = blackSilence()
+          localVideoref.current.srcObject = window.localStream
 
-  //           getUserMedia()
-  //         })
-  //     )
-  //   }
+          getUserMedia()
+        })
+    )
+  }
 
   const gotMessageFromServer = (fromId, message) => {
     var signal = JSON.parse(message)
@@ -421,10 +429,10 @@ const Video = (props) => {
     getUserMedia()
   }
 
-  //   const handleScreen = () => {
-  //     setscreen(!screen)
-  //     getDislayMedia()
-  //   }
+  const handleScreen = () => {
+    setscreen(!screen)
+    getDislayMedia()
+  }
 
   const handleEndCall = () => {
     try {
@@ -547,7 +555,7 @@ const Video = (props) => {
               {audio === true ? <MicIcon /> : <MicOffIcon />}
             </IconButton>
 
-            {/* {screenAvailable === true ? (
+            {screenAvailable === true ? (
               <IconButton style={{ color: '#424242' }} onClick={handleScreen}>
                 {screen === true ? (
                   <ScreenShareIcon />
@@ -555,7 +563,7 @@ const Video = (props) => {
                   <StopScreenShareIcon />
                 )}
               </IconButton>
-            ) : null} */}
+            ) : null}
           </div>
 
           <div className='container'>
