@@ -4,7 +4,6 @@ var cors = require('cors')
 const app = express()
 const bodyParser = require('body-parser')
 const path = require('path')
-var xss = require('xss')
 
 var server = http.createServer(app)
 var io = require('socket.io')(server)
@@ -19,10 +18,6 @@ if (process.env.NODE_ENV === 'production') {
   })
 }
 app.set('port', process.env.PORT || 4001)
-
-let sanitizeString = (str) => {
-  return xss(str)
-}
 
 let connections = {}
 let timeOnline = {}

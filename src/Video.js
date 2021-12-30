@@ -12,9 +12,6 @@ import StopScreenShareIcon from '@material-ui/icons/StopScreenShare'
 import CallEndIcon from '@material-ui/icons/CallEnd'
 import ChatIcon from '@material-ui/icons/Chat'
 
-import { message } from 'antd'
-import 'antd/dist/antd.css'
-
 import { Row } from 'reactstrap'
 import 'bootstrap/dist/css/bootstrap.css'
 import './Video.css'
@@ -38,14 +35,11 @@ var elms = 0
 const Video = (props) => {
   const localVideoref = useRef(null)
 
-  let videoAvailable = false
-  let audioAvailable = false
-
   const [video, setvideo] = useState(false)
   const [audio, setaudio] = useState(false)
   const [screen, setscreen] = useState(false)
   const [showModal, setshowModal] = useState(false)
-  const [screenAvailable, setscreenAvailable] = useState(false)
+  const [screenAvailable, setscreenAvailable] = useState(true)
   const [messages, setmessages] = useState([])
   const [message, setmessage] = useState('')
   const [newmessages, setnewmessages] = useState(0)
@@ -59,39 +53,16 @@ const Video = (props) => {
   }, [])
 
   const getPermissions = async () => {
-    try {
-      await navigator.mediaDevices
-        .getUserMedia({ video: true })
-        .then(() => (videoAvailable = true))
-        .catch(() => (videoAvailable = false))
-
-      await navigator.mediaDevices
-        .getUserMedia({ audio: true })
-        .then(() => (audioAvailable = true))
-        .catch(() => (audioAvailable = false))
-
-      if (navigator.mediaDevices.getDisplayMedia) {
-        setscreenAvailable(true)
-      } else {
-        setscreenAvailable(false)
-      }
-
-      if (videoAvailable || audioAvailable) {
-        navigator.mediaDevices
-          .getUserMedia({
-            video: videoAvailable,
-            audio: audioAvailable,
-          })
-          .then((stream) => {
-            window.localStream = stream
-            localVideoref.current.srcObject = stream
-          })
-          .then((stream) => {})
-          .catch((e) => console.log(e))
-      }
-    } catch (e) {
-      console.log(e)
-    }
+    await navigator.mediaDevices
+      .getUserMedia({
+        video: true,
+        audio: true,
+      })
+      .then((stream) => {
+        window.localStream = stream
+        localVideoref.current.srcObject = stream
+      })
+      .catch((e) => console.log(e))
   }
 
   const getMedia = () => {
