@@ -95,22 +95,17 @@ const Video = (props) => {
   }
 
   const getMedia = () => {
-    this.setState(
-      {
-        video: this.videoAvailable,
-        audio: this.audioAvailable,
-      },
-      () => {
-        this.getUserMedia()
-        this.connectToSocketServer()
-      }
-    )
+    setvideo(videoAvailable)
+    setaudio(audioAvailable)
+
+    getUserMedia()
+    connectToSocketServer()
   }
 
   const getUserMedia = () => {
     if ((video && videoAvailable) || (audio && audioAvailable)) {
       navigator.mediaDevices
-        .getUserMedia({ video: this.state.video, audio: this.state.audio })
+        .getUserMedia({ video: video, audio: audio })
         .then(getUserMediaSuccess)
         .then((stream) => {})
         .catch((e) => console.log(e))
@@ -510,8 +505,10 @@ const Video = (props) => {
     )
   }
 
-  const connect = () =>
-    this.setState({ askForUsername: false }, () => this.getMedia())
+  const connect = () => {
+    setaskForUsername(false)
+    getMedia()
+  }
 
   return (
     <div>
