@@ -10,7 +10,7 @@ import MicOffIcon from '@material-ui/icons/MicOff'
 import ScreenShareIcon from '@material-ui/icons/ScreenShare'
 import StopScreenShareIcon from '@material-ui/icons/StopScreenShare'
 import CallEndIcon from '@material-ui/icons/CallEnd'
-import ChatIcon from '@material-ui/icons/Chat'
+import { silence, black } from './utils'
 
 import { Row } from 'reactstrap'
 import 'bootstrap/dist/css/bootstrap.css'
@@ -395,24 +395,6 @@ const Video = (props) => {
     })
   }
 
-  const silence = () => {
-    let ctx = new AudioContext()
-    let oscillator = ctx.createOscillator()
-    let dst = oscillator.connect(ctx.createMediaStreamDestination())
-    oscillator.start()
-    ctx.resume()
-    return Object.assign(dst.stream.getAudioTracks()[0], { enabled: false })
-  }
-  const black = ({ width = 640, height = 480 } = {}) => {
-    let canvas = Object.assign(document.createElement('canvas'), {
-      width,
-      height,
-    })
-    canvas.getContext('2d').fillRect(0, 0, width, height)
-    let stream = canvas.captureStream()
-    return Object.assign(stream.getVideoTracks()[0], { enabled: false })
-  }
-
   const handleVideo = () => {
     setvideo(!video)
     getUserMedia()
@@ -437,33 +419,6 @@ const Video = (props) => {
   }
 
   const handleUsername = (e) => setusername(e.target.value)
-
-  const copyUrl = () => {
-    let text = window.location.href
-    if (!navigator.clipboard) {
-      let textArea = document.createElement('textarea')
-      textArea.value = text
-      document.body.appendChild(textArea)
-      textArea.focus()
-      textArea.select()
-      try {
-        document.execCommand('copy')
-        message.success('Link copied to clipboard!')
-      } catch (err) {
-        message.error('Failed to copy')
-      }
-      document.body.removeChild(textArea)
-      return
-    }
-    navigator.clipboard.writeText(text).then(
-      function () {
-        message.success('Link copied to clipboard!')
-      },
-      () => {
-        message.error('Failed to copy')
-      }
-    )
-  }
 
   const connect = () => {
     setaskForUsername(false)
@@ -563,19 +518,6 @@ const Video = (props) => {
           <div className='container'>
             <div style={{ paddingTop: '20px' }}>
               <Input value={window.location.href} disable='true'></Input>
-              <Button
-                style={{
-                  backgroundColor: '#3f51b5',
-                  color: 'whitesmoke',
-                  marginLeft: '20px',
-                  marginTop: '10px',
-                  width: '120px',
-                  fontSize: '10px',
-                }}
-                onClick={copyUrl}
-              >
-                Copy invite link
-              </Button>
             </div>
 
             <Row
