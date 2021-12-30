@@ -54,12 +54,6 @@ const Video = (props) => {
   }, [])
 
   const getPermissions = async () => {
-    stream.current = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: true,
-    })
-    // stream.current.replaceVideoTrack(stream.current.getVideoTracks()[0])
-
     await navigator.mediaDevices
       .getUserMedia({
         video: true,
