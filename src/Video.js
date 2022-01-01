@@ -258,6 +258,7 @@ const Video = (props) => {
       socket.emit('join-call', window.location.href)
       socketId = socket.id
 
+      // REMOVE VIDEO WHEN USER LEAVES
       socket.on('user-left', (id) => {
         let video = document.querySelector(`[data-socket="${id}"]`)
         if (video !== null) {
@@ -270,7 +271,11 @@ const Video = (props) => {
       })
 
       socket.on('user-joined', (id, clients) => {
+        console.log('clients ' + clients)
+
         clients.forEach((socketListId) => {
+          console.log('socketListId ' + socketListId)
+
           connections[socketListId] = new RTCPeerConnection(
             peerConnectionConfig
           )
@@ -292,6 +297,7 @@ const Video = (props) => {
               `[data-socket="${socketListId}"]`
             )
             if (searchVidep !== null) {
+              console.log('searchVidep ' + searchVidep)
               // if i don't do this check it make an empyt square
               searchVidep.srcObject = event.stream
             } else {
@@ -320,6 +326,8 @@ const Video = (props) => {
               video.playsinline = true
 
               main.appendChild(video)
+
+              console.log(video.srcObject)
             }
           }
 
@@ -390,6 +398,8 @@ const Video = (props) => {
     getMedia()
   }
 
+  console.log(localVideoref)
+
   return (
     <div>
       {askForUsername === true ? (
@@ -448,7 +458,9 @@ const Video = (props) => {
           </div>
         </div>
       ) : (
+        // MAIN VIDEO LOGIC HERE
         <div>
+          {/* VIDEO CONTROLS */}
           <div
             className='btn-down'
             style={{
@@ -484,7 +496,7 @@ const Video = (props) => {
             <div style={{ paddingTop: '20px' }}>
               <Input value={window.location.href} disable='true'></Input>
             </div>
-
+            {/* THE ACTUAL VIDEOS */}
             <Row
               id='main'
               className='flex-container'
