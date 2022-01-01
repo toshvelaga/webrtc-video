@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import io from 'socket.io-client'
 import faker from 'faker'
+import RecordRTC, { invokeSaveAsDialog } from 'recordrtc'
 
 import { IconButton, Badge, Input, Button } from '@material-ui/core'
 import VideocamIcon from '@material-ui/icons/Videocam'
@@ -35,6 +36,7 @@ var elms = 0
 const Video = (props) => {
   const localVideoref = useRef(null)
   const stream = useRef(null)
+  const [videoUrl, setvideoUrl] = useState('')
 
   const [video, setvideo] = useState(true)
   const [audio, setaudio] = useState(false)
@@ -51,6 +53,8 @@ const Video = (props) => {
   useEffect(() => {
     getPermissions()
   }, [])
+
+  useEffect(() => {}, [])
 
   const getPermissions = async () => {
     await navigator.mediaDevices
@@ -401,6 +405,27 @@ const Video = (props) => {
 
   console.log(localVideoref)
 
+  const record = async () => {
+    let stream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true,
+    })
+    let recorder = new RecordRTC.RecordRTCPromisesHandler(stream, {
+      type: 'video',
+    })
+    recorder.startRecording()
+
+    const sleep = (m) => new Promise((r) => setTimeout(r, m))
+    await sleep(3000)
+
+    await recorder.stopRecording()
+    let blob = await recorder.getBlob()
+    console.log(blob)
+
+    const videoURL = window.URL.createObjectURL(blob)
+    setvideoUrl(videoURL)
+  }
+
   return (
     <div>
       {askForUsername === true ? (
@@ -470,6 +495,7 @@ const Video = (props) => {
               textAlign: 'center',
             }}
           >
+            <button onClick={record}>record</button>
             <IconButton style={{ color: '#424242' }} onClick={handleVideo}>
               {video === true ? <VideocamIcon /> : <VideocamOffIcon />}
             </IconButton>
@@ -517,6 +543,7 @@ const Video = (props) => {
                   height: '100%',
                 }}
               ></video>
+              {videoUrl ? <video controls src={videoUrl} /> : null}
             </Row>
           </div>
         </div>
