@@ -433,28 +433,6 @@ const Video = (props) => {
   //     setvideoUrl(videoURL)
   //   }
 
-  var recorder = RecordRTC(streams, {
-    type: 'video',
-    mimeType: 'video/webm',
-  })
-
-  const record = () => {
-    recorder.startRecording()
-  }
-
-  const stopRecord = () => {
-    recorder.stopRecording(function () {
-      var blob = recorder.getBlob()
-      console.log(blob)
-
-      video.muted = false
-
-      video.srcObject = null
-      const videoURL = window.URL.createObjectURL(blob)
-      setvideoUrl(videoURL)
-    })
-  }
-
   return (
     <div>
       {askForUsername === true ? (
@@ -524,8 +502,8 @@ const Video = (props) => {
               textAlign: 'center',
             }}
           >
-            <button onClick={record}>record</button>
-            <button onClick={stopRecord}>stop recording</button>
+            {/* <button onClick={record}>record</button>
+            <button onClick={stopRecord}>stop recording</button> */}
             <IconButton style={{ color: '#424242' }} onClick={handleVideo}>
               {video === true ? <VideocamIcon /> : <VideocamOffIcon />}
             </IconButton>
