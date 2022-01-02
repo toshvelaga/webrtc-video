@@ -50,6 +50,7 @@ const Video = (props) => {
 
   //   const [streams, setstreams] = useState([])
   const streams = []
+  const recorder = useRef(null)
 
   connections = {}
 
@@ -57,7 +58,13 @@ const Video = (props) => {
     getPermissions()
   }, [])
 
-  useEffect(() => {}, [])
+  useEffect(() => {
+    const row = document.getElementById('my-video')
+
+    recorder.current = new RecordRTC(row, {
+      type: 'video',
+    })
+  }, [])
 
   const getPermissions = async () => {
     await navigator.mediaDevices
@@ -433,6 +440,17 @@ const Video = (props) => {
   //     setvideoUrl(videoURL)
   //   }
 
+  const record = () => {
+    recorder.current.startRecording()
+  }
+
+  const stopRecording = () => {
+    recorder.current.stopRecording(function () {
+      var blob = recorder.current.getBlob()
+      console.log(blob)
+    })
+  }
+
   return (
     <div>
       {askForUsername === true ? (
@@ -502,8 +520,8 @@ const Video = (props) => {
               textAlign: 'center',
             }}
           >
-            {/* <button onClick={record}>record</button>
-            <button onClick={stopRecord}>stop recording</button> */}
+            <button onClick={record}>record</button>
+            <button onClick={stopRecording}>stop recording</button>
             <IconButton style={{ color: '#424242' }} onClick={handleVideo}>
               {video === true ? <VideocamIcon /> : <VideocamOffIcon />}
             </IconButton>
