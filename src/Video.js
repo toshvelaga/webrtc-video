@@ -48,6 +48,9 @@ const Video = (props) => {
   const [askForUsername, setaskForUsername] = useState(true)
   const [username, setusername] = useState(faker.internet.userName())
 
+  //   const [streams, setstreams] = useState([])
+  const streams = []
+
   connections = {}
 
   useEffect(() => {
@@ -63,6 +66,9 @@ const Video = (props) => {
         audio: true,
       })
       .then((stream) => {
+        console.log(stream)
+        streams.push(stream)
+
         window.localStream = stream
         localVideoref.current.srcObject = stream
       })
@@ -90,6 +96,7 @@ const Video = (props) => {
     //   console.log(e)
     // }
 
+    // streams.push(window.localStream)
     window.localStream = stream
     localVideoref.current.srcObject = stream
 
@@ -405,25 +412,47 @@ const Video = (props) => {
 
   console.log(localVideoref)
 
-  const record = async () => {
-    let stream = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: true,
-    })
-    let recorder = new RecordRTC.RecordRTCPromisesHandler(stream, {
-      type: 'video',
-    })
+  //   const record = async () => {
+  //     let stream = await navigator.mediaDevices.getUserMedia({
+  //       video: true,
+  //       audio: true,
+  //     })
+  //     let recorder = new RecordRTC.RecordRTCPromisesHandler(stream, {
+  //       type: 'video',
+  //     })
+  //     recorder.startRecording()
+
+  //     const sleep = (m) => new Promise((r) => setTimeout(r, m))
+  //     await sleep(3000)
+
+  //     await recorder.stopRecording()
+  //     let blob = await recorder.getBlob()
+  //     console.log(blob)
+
+  //     const videoURL = window.URL.createObjectURL(blob)
+  //     setvideoUrl(videoURL)
+  //   }
+
+  var recorder = RecordRTC(streams, {
+    type: 'video',
+    mimeType: 'video/webm',
+  })
+
+  const record = () => {
     recorder.startRecording()
+  }
 
-    const sleep = (m) => new Promise((r) => setTimeout(r, m))
-    await sleep(3000)
+  const stopRecord = () => {
+    recorder.stopRecording(function () {
+      var blob = recorder.getBlob()
+      console.log(blob)
 
-    await recorder.stopRecording()
-    let blob = await recorder.getBlob()
-    console.log(blob)
+      video.muted = false
 
-    const videoURL = window.URL.createObjectURL(blob)
-    setvideoUrl(videoURL)
+      video.srcObject = null
+      const videoURL = window.URL.createObjectURL(blob)
+      setvideoUrl(videoURL)
+    })
   }
 
   return (
@@ -496,6 +525,7 @@ const Video = (props) => {
             }}
           >
             <button onClick={record}>record</button>
+            <button onClick={stopRecord}>stop recording</button>
             <IconButton style={{ color: '#424242' }} onClick={handleVideo}>
               {video === true ? <VideocamIcon /> : <VideocamOffIcon />}
             </IconButton>
