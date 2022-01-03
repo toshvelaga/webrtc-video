@@ -37,7 +37,8 @@
     "xss": "^1.0.8"
   },
   "scripts": {
-    "start": "react-scripts start && nodemon app.js",
+    "heroku-postbuild": "npm install --only-dev && npm install && npm run build",
+    "start": "nodemon app.js",
     "client": "react-scripts start",
     "server": "nodemon app.js",
     "build": "react-scripts build",
