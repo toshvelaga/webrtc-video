@@ -72,7 +72,7 @@ const Video = (props) => {
     axios
       .post('http://localhost:4001/api/twilio')
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         seticeServers(res.data.ice_servers)
       })
       .catch((err) => console.log(err))
