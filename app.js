@@ -7,6 +7,7 @@ const path = require('path')
 const { Server } = require('socket.io')
 var server = http.createServer(app)
 require('dotenv').config()
+const axios = require('axios')
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID
 const authToken = process.env.TWILIO_AUTH_TOKEN
@@ -95,7 +96,22 @@ io.on('connection', (socket) => {
 
 // twilio STUN AND TURN SERVER CREDENTIALS
 app.post('/api/twilio', async (req, res) => {
-  client.tokens.create().then((token) => console.log(token.username))
+  const baseUrl = `https://api.twilio.com/2010-04-01/Accounts/ACf7c04ed5e248de49a67c236a894b7c3b/Tokens.json`
 
-  res.json({ msg: 'hello' })
+  const auth = { username: accountSid, password: authToken }
+
+  const token = await axios.post(
+    baseUrl,
+    {},
+    {
+      auth: {
+        username: accountSid,
+        password: authToken,
+      },
+    }
+  )
+
+  console.log(token)
+
+  res.json(token)
 })
