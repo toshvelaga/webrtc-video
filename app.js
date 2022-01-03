@@ -4,9 +4,20 @@ var cors = require('cors')
 const app = express()
 const bodyParser = require('body-parser')
 const path = require('path')
-
+const { Server } = require('socket.io')
 var server = http.createServer(app)
-var io = require('socket.io')(server)
+
+const WS_PORT = process.env.PORT || 4002
+const PORT = process.env.PORT || 4001
+
+// var io = require('socket.io')(server)
+
+const io = new Server(WS_PORT, {
+  /* options */
+  cors: {
+    origin: '*',
+  },
+})
 
 app.use(cors())
 app.use(bodyParser.json())
@@ -17,8 +28,6 @@ if (process.env.NODE_ENV === 'production') {
     res.sendFile(path.join(__dirname + '/build/index.html'))
   })
 }
-
-const PORT = process.env.PORT || 4001
 
 let connections = {}
 let timeOnline = {}
@@ -75,6 +84,6 @@ io.on('connection', (socket) => {
   })
 })
 
-server.listen(PORT, () => {
-  console.log(`Listening on PORT ${PORT}`)
+app.listen(PORT, () => {
+  console.log(`Listening on PORT ${PORT} for REST API requests`)
 })

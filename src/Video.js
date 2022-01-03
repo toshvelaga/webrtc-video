@@ -17,10 +17,12 @@ import { Row } from 'reactstrap'
 import 'bootstrap/dist/css/bootstrap.css'
 import './Video.css'
 
+import axios from 'axios'
+
 const server_url =
   process.env.NODE_ENV === 'production'
     ? 'https://video.sebastienbiollo.com'
-    : 'http://localhost:4001'
+    : 'http://localhost:4002'
 
 var connections = {}
 const peerConnectionConfig = {
