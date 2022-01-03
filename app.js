@@ -7,11 +7,15 @@ const path = require('path')
 const { Server } = require('socket.io')
 var server = http.createServer(app)
 
-const WS_PORT = process.env.PORT || 4002
 const PORT = process.env.PORT || 4001
+const WS_PORT = process.env.PORT || 4002
 
-// var io = require('socket.io')(server)
+// REST API
+app.listen(PORT, () => {
+  console.log(`Listening on PORT ${PORT} for REST API requests`)
+})
 
+// SOCKET IO INIT
 const io = new Server(WS_PORT, {
   /* options */
   cors: {
@@ -82,8 +86,4 @@ io.on('connection', (socket) => {
       }
     }
   })
-})
-
-app.listen(PORT, () => {
-  console.log(`Listening on PORT ${PORT} for REST API requests`)
 })
