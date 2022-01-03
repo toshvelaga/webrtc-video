@@ -4,31 +4,19 @@ var cors = require('cors')
 const app = express()
 const bodyParser = require('body-parser')
 const path = require('path')
-const { Server } = require('socket.io')
+var xss = require('xss')
+
 var server = http.createServer(app)
-require('dotenv').config()
-const axios = require('axios')
 
-const accountSid = process.env.TWILIO_ACCOUNT_SID
-const authToken = process.env.TWILIO_AUTH_TOKEN
-const client = require('twilio')(accountSid, authToken)
-
-// const PORT = process.env.PORT || 4001
-const WS_PORT = process.env.PORT || 4002
-
-// REST API
-
-// app.listen(PORT, () => {
-//   console.log(`Listening on PORT ${PORT} for REST API requests`)
-// })
-
-// SOCKET IO INIT
-const io = new Server(WS_PORT, {
-  /* options */
+const io = require('socket.io')(server, {
   cors: {
     origin: '*',
   },
 })
+
+// const accountSid = process.env.TWILIO_ACCOUNT_SID
+// const authToken = process.env.TWILIO_AUTH_TOKEN
+// const client = require('twilio')(accountSid, authToken)
 
 app.use(cors())
 app.use(bodyParser.json())
@@ -39,6 +27,8 @@ if (process.env.NODE_ENV === 'production') {
     res.sendFile(path.join(__dirname + '/build/index.html'))
   })
 }
+
+app.set('port', process.env.PORT || 4001)
 
 let connections = {}
 let timeOnline = {}
@@ -95,29 +85,34 @@ io.on('connection', (socket) => {
   })
 })
 
-// twilio STUN AND TURN SERVER CREDENTIALS
-app.post('/api/twilio', async (req, res) => {
-  const baseUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Tokens.json`
-
-  const token = await axios
-    .post(
-      baseUrl,
-      {},
-      {
-        auth: {
-          username: accountSid,
-          password: authToken,
-        },
-      }
-    )
-    .then((res) => {
-      return res.data
-    })
-    .catch((err) => {
-      return err
-    })
-
-  console.log(token)
-
-  res.json(token)
+server.listen(app.get('port'), () => {
+  console.log('listening on', app.get('port'))
 })
+
+// twilio STUN AND TURN SERVER CREDENTIALS
+
+// app.post('/api/twilio', async (req, res) => {
+//   const baseUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Tokens.json`
+
+//   const token = await axios
+//     .post(
+//       baseUrl,
+//       {},
+//       {
+//         auth: {
+//           username: accountSid,
+//           password: authToken,
+//         },
+//       }
+//     )
+//     .then((res) => {
+//       return res.data
+//     })
+//     .catch((err) => {
+//       return err
+//     })
+
+//   console.log(token)
+
+//   res.json(token)
+// })

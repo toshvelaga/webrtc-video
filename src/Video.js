@@ -22,7 +22,7 @@ import axios from 'axios'
 const server_url =
   process.env.NODE_ENV === 'production'
     ? 'https://video.sebastienbiollo.com'
-    : 'http://localhost:4002'
+    : 'http://localhost:4001'
 
 var connections = {}
 
@@ -68,15 +68,14 @@ const Video = (props) => {
     })
   }, [])
 
-  useEffect(() => {
-    axios
-      .post('http://localhost:4001/api/twilio')
-      .then((res) => {
-        // console.log(res)
-        seticeServers(res.data.ice_servers)
-      })
-      .catch((err) => console.log(err))
-  }, [])
+  // useEffect(() => {
+  //   axios
+  //     .post('http://localhost:4001/api/twilio')
+  //     .then((res) => {
+  //       seticeServers(res.data.ice_servers)
+  //     })
+  //     .catch((err) => console.log(err))
+  // }, [])
 
   const getPermissions = async () => {
     await navigator.mediaDevices
