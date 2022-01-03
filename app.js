@@ -100,16 +100,23 @@ app.post('/api/twilio', async (req, res) => {
 
   const auth = { username: accountSid, password: authToken }
 
-  const token = await axios.post(
-    baseUrl,
-    {},
-    {
-      auth: {
-        username: accountSid,
-        password: authToken,
-      },
-    }
-  )
+  const token = await axios
+    .post(
+      baseUrl,
+      {},
+      {
+        auth: {
+          username: accountSid,
+          password: authToken,
+        },
+      }
+    )
+    .then((res) => {
+      return res.data
+    })
+    .catch((err) => {
+      return err
+    })
 
   console.log(token)
 
