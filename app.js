@@ -6,6 +6,7 @@ const bodyParser = require('body-parser')
 const path = require('path')
 const { Server } = require('socket.io')
 var server = http.createServer(app)
+require('dotenv').config()
 
 const PORT = process.env.PORT || 4001
 const WS_PORT = process.env.PORT || 4002
@@ -86,4 +87,11 @@ io.on('connection', (socket) => {
       }
     }
   })
+})
+
+// twilio STUN AND TURN SERVER CREDENTIALS
+app.post('/api/twilio', async (req, res) => {
+  console.log('hello')
+
+  res.json({ msg: 'hello' })
 })

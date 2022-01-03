@@ -68,6 +68,13 @@ const Video = (props) => {
     })
   }, [])
 
+  useEffect(() => {
+    axios
+      .post('http://localhost:4001/api/twilio')
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err))
+  }, [])
+
   const getPermissions = async () => {
     await navigator.mediaDevices
       .getUserMedia({
