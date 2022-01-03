@@ -13,8 +13,8 @@ const accountSid = process.env.TWILIO_ACCOUNT_SID
 const authToken = process.env.TWILIO_AUTH_TOKEN
 const client = require('twilio')(accountSid, authToken)
 
-const PORT = process.env.PORT || 4001
-const WS_PORT = process.env.PORT || 4002
+const PORT = 4001
+const WS_PORT = 4002
 
 // REST API
 app.listen(PORT, () => {
