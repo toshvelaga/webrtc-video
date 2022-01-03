@@ -8,6 +8,10 @@ const { Server } = require('socket.io')
 var server = http.createServer(app)
 require('dotenv').config()
 
+const accountSid = process.env.TWILIO_ACCOUNT_SID
+const authToken = process.env.TWILIO_AUTH_TOKEN
+const client = require('twilio')(accountSid, authToken)
+
 const PORT = process.env.PORT || 4001
 const WS_PORT = process.env.PORT || 4002
 
@@ -91,7 +95,7 @@ io.on('connection', (socket) => {
 
 // twilio STUN AND TURN SERVER CREDENTIALS
 app.post('/api/twilio', async (req, res) => {
-  console.log('hello')
+  client.tokens.create().then((token) => console.log(token.username))
 
   res.json({ msg: 'hello' })
 })
