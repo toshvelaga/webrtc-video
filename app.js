@@ -96,9 +96,7 @@ io.on('connection', (socket) => {
 
 // twilio STUN AND TURN SERVER CREDENTIALS
 app.post('/api/twilio', async (req, res) => {
-  const baseUrl = `https://api.twilio.com/2010-04-01/Accounts/ACf7c04ed5e248de49a67c236a894b7c3b/Tokens.json`
-
-  const auth = { username: accountSid, password: authToken }
+  const baseUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Tokens.json`
 
   const token = await axios
     .post(
