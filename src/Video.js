@@ -25,12 +25,7 @@ const server_url =
     : 'http://localhost:4002'
 
 var connections = {}
-const peerConnectionConfig = {
-  iceServers: [
-    // { 'urls': 'stun:stun.services.mozilla.com' },
-    { urls: 'stun:stun.l.google.com:19302' },
-  ],
-}
+
 var socket = null
 var socketId = null
 var elms = 0
@@ -49,12 +44,17 @@ const Video = (props) => {
   const [newmessages, setnewmessages] = useState(0)
   const [askForUsername, setaskForUsername] = useState(true)
   const [username, setusername] = useState(faker.internet.userName())
+  const [iceServers, seticeServers] = useState([])
 
   //   const [streams, setstreams] = useState([])
   const streams = []
   const recorder = useRef(null)
 
   connections = {}
+
+  const peerConnectionConfig = {
+    iceServers: iceServers,
+  }
 
   useEffect(() => {
     getPermissions()
@@ -71,7 +71,10 @@ const Video = (props) => {
   useEffect(() => {
     axios
       .post('http://localhost:4001/api/twilio')
-      .then((res) => console.log(res))
+      .then((res) => {
+        console.log(res)
+        seticeServers(res.data.ice_servers)
+      })
       .catch((err) => console.log(err))
   }, [])
 
