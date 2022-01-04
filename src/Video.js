@@ -68,14 +68,16 @@ const Video = (props) => {
     })
   }, [])
 
-  // useEffect(() => {
-  //   axios
-  //     .post('http://localhost:4001/api/twilio')
-  //     .then((res) => {
-  //       seticeServers(res.data.ice_servers)
-  //     })
-  //     .catch((err) => console.log(err))
-  // }, [])
+  useEffect(() => {
+    axios
+      .post(
+        'https://us-central1-callapp-9d817.cloudfunctions.net/makeTwilioWebRTC'
+      )
+      .then((res) => {
+        seticeServers(res.data.ice_servers)
+      })
+      .catch((err) => console.log(err))
+  }, [])
 
   const getPermissions = async () => {
     await navigator.mediaDevices
