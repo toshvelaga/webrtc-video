@@ -21,8 +21,10 @@ import axios from 'axios'
 
 const server_url =
   process.env.NODE_ENV === 'production'
-    ? 'https://video.sebastienbiollo.com'
+    ? 'https://video-meeting-socket.herokuapp.com'
     : 'http://localhost:4001'
+
+console.log(server_url)
 
 var connections = {}
 
