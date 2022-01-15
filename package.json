@@ -17,6 +17,7 @@
     "express": "^4.17.1",
     "faker": "^4.1.0",
     "nodemon": "^2.0.2",
+    "puppeteer": "^13.0.1",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.0",
     "react-css-grid": "^2.0.0-0",
