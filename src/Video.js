@@ -348,9 +348,9 @@ const Video = (props) => {
                 minWidth: cssMesure.minWidth,
                 minHeight: cssMesure.minHeight,
                 maxHeight: '100%',
-                margin: '10px',
-                borderStyle: 'solid',
-                borderColor: '#bdbdbd',
+                // margin: '10px',
+                // borderStyle: 'solid',
+                // borderColor: '#bdbdbd',
                 objectFit: 'fill',
               }
               for (let i in css) video.style[i] = css[i]
@@ -468,7 +468,7 @@ const Video = (props) => {
         </div>
 
         <div className='container'>
-          <div style={{ paddingTop: '20px' }}>
+          <div style={{ paddingTop: '20px', paddingBottom: '20px' }}>
             <Input value={window.location.href} disable='true'></Input>
           </div>
           {/* THE ACTUAL VIDEOS */}
@@ -483,9 +483,12 @@ const Video = (props) => {
               autoPlay
               muted
               style={{
-                borderStyle: 'solid',
-                borderColor: '#bdbdbd',
-                margin: '10px',
+                // borderStyle: 'solid',
+                // borderColor: '#bdbdbd',
+                // margin '10px',
+                margin: '0',
+                padding: '0',
+
                 objectFit: 'fill',
                 width: '100%',
                 height: '100%',
