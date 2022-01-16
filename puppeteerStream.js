@@ -1,6 +1,7 @@
 const { launch, getStream } = require('puppeteer-stream')
 const fs = require('fs')
 
+// node arguments are present from the third position going forward.
 const args = process.argv.slice(2)
 const file = fs.createWriteStream(`./reports/videos/${args[0]}.mp4`)
 
