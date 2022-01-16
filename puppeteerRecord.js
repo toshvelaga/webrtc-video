@@ -13,11 +13,13 @@ const Config = {
 }
 
 ;(async () => {
-  const browser = await puppeteer.launch({ headless: false })
+  const browser = await puppeteer.launch({
+    args: ['--use-fake-ui-for-media-stream'],
+  })
   const page = await browser.newPage()
   const recorder = new PuppeteerScreenRecorder(page, Config)
-  await recorder.start('./report/video/video.mp4') // supports extension - mp4, avi, webm and mov
-  await page.goto('https://video-meeting-socket.herokuapp.com/tosh')
+  await recorder.start('./report/video/tosh.mp4') // supports extension - mp4, avi, webm and mov
+  await page.goto('http://localhost:8000/tosh')
   await recorder.stop()
   await browser.close()
 })()
