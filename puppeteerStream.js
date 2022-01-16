@@ -11,10 +11,11 @@ async function puppeteerStream() {
   await page.goto('https://video-meeting-socket.herokuapp.com/tosh')
   await page.waitForSelector('button')
   await page.click('button')
-  const stream = await getStream(page, { audio: true, video: true })
 
+  const stream = await getStream(page, { audio: true, video: true })
   stream.pipe(file)
-  await page.waitForTimeout(7000)
+
+  await page.waitForTimeout(8000)
   await stream.destroy()
   await browser.close()
   file.close()
