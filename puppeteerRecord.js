@@ -14,7 +14,9 @@ const Config = {
 
 ;(async () => {
   const browser = await puppeteer.launch({
-    args: ['--use-fake-ui-for-media-stream'],
+    headless: false,
+    executablePath:
+      '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
   })
   const page = await browser.newPage()
   const recorder = new PuppeteerScreenRecorder(page, Config)
