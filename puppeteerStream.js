@@ -13,6 +13,7 @@ async function puppeteerStream() {
   await page.waitForSelector('button')
   await page.click('button')
 
+  // records audio and video
   const stream = await getStream(page, { audio: true, video: true })
   stream.pipe(file)
 
