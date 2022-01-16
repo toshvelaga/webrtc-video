@@ -8,7 +8,7 @@ const puppeteer = require('puppeteer')
   await page.click('button')
   await page.waitForTimeout(2000)
 
-  await page.screenshot({ path: 'example6.png' })
+  await page.screenshot({ path: './reports/example6.png' })
 
   await browser.close()
 })()

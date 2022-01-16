@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer')
 const { PuppeteerScreenRecorder } = require('puppeteer-screen-recorder')
 
-const Config = {
+const config = {
   followNewTab: true,
   fps: 25,
   videoFrame: {
@@ -13,13 +13,16 @@ const Config = {
 }
 
 ;(async () => {
-  const browser = await puppeteer.launch({
-    args: ['--use-fake-ui-for-media-stream'],
-  })
+  const browser = await puppeteer.launch()
   const page = await browser.newPage()
-  const recorder = new PuppeteerScreenRecorder(page, Config)
-  await recorder.start('./report/video/tosh.mp4') // supports extension - mp4, avi, webm and mov
-  await page.goto('http://localhost:8000/tosh')
+  await page.goto('https://video-meeting-socket.herokuapp.com/tosh')
+  await page.waitForSelector('button')
+  await page.click('button')
+  const recorder = new PuppeteerScreenRecorder(page)
+
+  await recorder.start('./reports/recording.mp4') // supports extension - mp4, avi, webm and mov
+  await page.waitForTimeout(4000)
+
   await recorder.stop()
   await browser.close()
 })()
