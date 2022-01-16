@@ -45,7 +45,7 @@ const Video = (props) => {
   const [message, setmessage] = useState('')
   const [newmessages, setnewmessages] = useState(0)
   const [askForUsername, setaskForUsername] = useState(true)
-  const [username, setusername] = useState(faker.internet.userName())
+  const [username, setusername] = useState('tosh')
   const [iceServers, seticeServers] = useState([])
 
   //   const [streams, setstreams] = useState([])
@@ -436,19 +436,6 @@ const Video = (props) => {
     getMedia()
   }
 
-  console.log(localVideoref)
-
-  const record = () => {
-    recorder.current.startRecording()
-  }
-
-  const stopRecording = () => {
-    recorder.current.stopRecording(function () {
-      var blob = recorder.current.getBlob()
-      console.log(blob)
-    })
-  }
-
   return (
     <div>
       <div>
@@ -461,8 +448,6 @@ const Video = (props) => {
             textAlign: 'center',
           }}
         >
-          <button onClick={record}>record</button>
-          <button onClick={stopRecording}>stop recording</button>
           <IconButton style={{ color: '#424242' }} onClick={handleVideo}>
             {video === true ? <VideocamIcon /> : <VideocamOffIcon />}
           </IconButton>
