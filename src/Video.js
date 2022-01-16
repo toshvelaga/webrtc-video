@@ -81,6 +81,10 @@ const Video = (props) => {
       .catch((err) => console.log(err))
   }, [])
 
+  useEffect(() => {
+    connect()
+  }, [])
+
   const getPermissions = async () => {
     await navigator.mediaDevices
       .getUserMedia({
@@ -434,27 +438,6 @@ const Video = (props) => {
 
   console.log(localVideoref)
 
-  //   const record = async () => {
-  //     let stream = await navigator.mediaDevices.getUserMedia({
-  //       video: true,
-  //       audio: true,
-  //     })
-  //     let recorder = new RecordRTC.RecordRTCPromisesHandler(stream, {
-  //       type: 'video',
-  //     })
-  //     recorder.startRecording()
-
-  //     const sleep = (m) => new Promise((r) => setTimeout(r, m))
-  //     await sleep(3000)
-
-  //     await recorder.stopRecording()
-  //     let blob = await recorder.getBlob()
-  //     console.log(blob)
-
-  //     const videoURL = window.URL.createObjectURL(blob)
-  //     setvideoUrl(videoURL)
-  //   }
-
   const record = () => {
     recorder.current.startRecording()
   }
@@ -468,45 +451,46 @@ const Video = (props) => {
 
   return (
     <div>
-      {askForUsername === true ? (
-        <div>
-          <div
-            style={{
-              background: 'white',
-              width: '30%',
-              height: 'auto',
-              padding: '20px',
-              minWidth: '400px',
-              textAlign: 'center',
-              margin: 'auto',
-              marginTop: '50px',
-              justifyContent: 'center',
-            }}
-          >
-            <p style={{ margin: 0, fontWeight: 'bold', paddingRight: '50px' }}>
-              Set your username
-            </p>
-            <Input
-              placeholder='Username'
-              value={username}
-              onChange={(e) => handleUsername(e)}
-            />
-            <Button
-              variant='contained'
-              color='primary'
-              onClick={connect}
-              style={{ margin: '20px' }}
-            >
-              Connect
-            </Button>
-          </div>
+      <div>
+        {/* VIDEO CONTROLS */}
+        <div
+          className='btn-down'
+          style={{
+            backgroundColor: 'whitesmoke',
+            color: 'whitesmoke',
+            textAlign: 'center',
+          }}
+        >
+          <button onClick={record}>record</button>
+          <button onClick={stopRecording}>stop recording</button>
+          <IconButton style={{ color: '#424242' }} onClick={handleVideo}>
+            {video === true ? <VideocamIcon /> : <VideocamOffIcon />}
+          </IconButton>
 
-          <div
-            style={{
-              justifyContent: 'center',
-              textAlign: 'center',
-              paddingTop: '40px',
-            }}
+          <IconButton style={{ color: '#f44336' }} onClick={handleEndCall}>
+            <CallEndIcon />
+          </IconButton>
+
+          <IconButton style={{ color: '#424242' }} onClick={handleAudio}>
+            {audio === true ? <MicIcon /> : <MicOffIcon />}
+          </IconButton>
+
+          {screenAvailable === true ? (
+            <IconButton style={{ color: '#424242' }} onClick={handleScreen}>
+              {screen === true ? <ScreenShareIcon /> : <StopScreenShareIcon />}
+            </IconButton>
+          ) : null}
+        </div>
+
+        <div className='container'>
+          <div style={{ paddingTop: '20px' }}>
+            <Input value={window.location.href} disable='true'></Input>
+          </div>
+          {/* THE ACTUAL VIDEOS */}
+          <Row
+            id='main'
+            className='flex-container'
+            style={{ margin: 0, padding: 0 }}
           >
             <video
               id='my-video'
@@ -516,79 +500,16 @@ const Video = (props) => {
               style={{
                 borderStyle: 'solid',
                 borderColor: '#bdbdbd',
+                margin: '10px',
                 objectFit: 'fill',
-                width: '60%',
-                height: '30%',
+                width: '100%',
+                height: '100%',
               }}
             ></video>
-          </div>
+            {videoUrl ? <video controls src={videoUrl} /> : null}
+          </Row>
         </div>
-      ) : (
-        // MAIN VIDEO LOGIC HERE
-        <div>
-          {/* VIDEO CONTROLS */}
-          <div
-            className='btn-down'
-            style={{
-              backgroundColor: 'whitesmoke',
-              color: 'whitesmoke',
-              textAlign: 'center',
-            }}
-          >
-            <button onClick={record}>record</button>
-            <button onClick={stopRecording}>stop recording</button>
-            <IconButton style={{ color: '#424242' }} onClick={handleVideo}>
-              {video === true ? <VideocamIcon /> : <VideocamOffIcon />}
-            </IconButton>
-
-            <IconButton style={{ color: '#f44336' }} onClick={handleEndCall}>
-              <CallEndIcon />
-            </IconButton>
-
-            <IconButton style={{ color: '#424242' }} onClick={handleAudio}>
-              {audio === true ? <MicIcon /> : <MicOffIcon />}
-            </IconButton>
-
-            {screenAvailable === true ? (
-              <IconButton style={{ color: '#424242' }} onClick={handleScreen}>
-                {screen === true ? (
-                  <ScreenShareIcon />
-                ) : (
-                  <StopScreenShareIcon />
-                )}
-              </IconButton>
-            ) : null}
-          </div>
-
-          <div className='container'>
-            <div style={{ paddingTop: '20px' }}>
-              <Input value={window.location.href} disable='true'></Input>
-            </div>
-            {/* THE ACTUAL VIDEOS */}
-            <Row
-              id='main'
-              className='flex-container'
-              style={{ margin: 0, padding: 0 }}
-            >
-              <video
-                id='my-video'
-                ref={localVideoref}
-                autoPlay
-                muted
-                style={{
-                  borderStyle: 'solid',
-                  borderColor: '#bdbdbd',
-                  margin: '10px',
-                  objectFit: 'fill',
-                  width: '100%',
-                  height: '100%',
-                }}
-              ></video>
-              {videoUrl ? <video controls src={videoUrl} /> : null}
-            </Row>
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   )
 }
