@@ -3,8 +3,12 @@ const puppeteer = require('puppeteer')
 ;(async () => {
   const browser = await puppeteer.launch({ headless: true })
   const page = await browser.newPage()
-  await page.goto('http://localhost:8000/tosh')
-  await page.screenshot({ path: 'example.png' })
+  await page.goto('https://video-meeting-socket.herokuapp.com/tosh')
+  await page.waitForSelector('button')
+  await page.click('button')
+  await page.waitForTimeout(2000)
+
+  await page.screenshot({ path: 'example6.png' })
 
   await browser.close()
 })()
