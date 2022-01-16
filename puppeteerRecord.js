@@ -20,7 +20,7 @@ const config = {
   await page.click('button')
   const recorder = new PuppeteerScreenRecorder(page)
 
-  await recorder.start('./reports/recording.mp4') // supports extension - mp4, avi, webm and mov
+  await recorder.start('./reports/videos/recording.mp4') // supports extension - mp4, avi, webm and mov
   await page.waitForTimeout(4000)
 
   await recorder.stop()

@@ -1,22 +1,22 @@
 const { launch, getStream } = require('puppeteer-stream')
 const fs = require('fs')
 
-const file = fs.createWriteStream('./report/video/tosh2.mp4')
+const file = fs.createWriteStream('./reports/videos/tosh.mp4')
 
-async function test() {
+async function puppeteerStream() {
   const browser = await launch()
 
   const page = await browser.newPage()
   await page.goto('https://video-meeting-socket.herokuapp.com/tosh')
+  await page.waitForSelector('button')
+  await page.click('button')
   const stream = await getStream(page, { audio: true, video: true })
-  console.log('recording')
 
   stream.pipe(file)
-  setTimeout(async () => {
-    await stream.destroy()
-    file.close()
-    console.log('finished')
-  }, 1000 * 10)
+  await page.waitForTimeout(7000)
+  await stream.destroy()
+  await browser.close()
+  file.close()
 }
 
-test()
+puppeteerStream()
