@@ -8,7 +8,7 @@ const args = process.argv.slice(2)
   const browser = await puppeteer.launch()
 
   const page = await browser.newPage()
-  await page.goto('https://video-meeting-socket.herokuapp.com/tosh')
+  await page.goto('https://video-meeting-socket.herokuapp.com/room')
   await page.waitForSelector('button')
   await page.click('button')
 

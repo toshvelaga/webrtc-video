@@ -7,7 +7,8 @@ const args = process.argv.slice(2)
   const browser = await puppeteer.launch({ headless: true })
 
   const page = await browser.newPage()
-  await page.goto('https://video-meeting-socket.herokuapp.com/tosh')
+  // create a room called room
+  await page.goto('https://video-meeting-socket.herokuapp.com/room')
   await page.waitForSelector('button')
   await page.click('button')
   await page.waitForTimeout(2000)
