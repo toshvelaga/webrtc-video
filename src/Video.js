@@ -38,7 +38,7 @@ const Video = (props) => {
   const [videoUrl, setvideoUrl] = useState('')
 
   const [video, setvideo] = useState(true)
-  const [audio, setaudio] = useState(false)
+  const [audio, setaudio] = useState(true)
   const [screen, setscreen] = useState(false)
   const [screenAvailable, setscreenAvailable] = useState(true)
   const [messages, setmessages] = useState([])
