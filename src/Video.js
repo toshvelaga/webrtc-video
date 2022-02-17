@@ -412,8 +412,11 @@ const Video = (props) => {
   }
 
   const handleAudio = () => {
+    console.log('handleAudio')
     setaudio(!audio)
-    getUserMedia()
+    // getUserMedia()
+    localVideoref.current.srcObject.getAudioTracks()[0].enabled =
+      !localVideoref.current.srcObject.getAudioTracks()[0].enabled
   }
 
   const handleScreen = () => {
