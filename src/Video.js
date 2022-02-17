@@ -112,13 +112,13 @@ const Video = (props) => {
   }
 
   const getUserMediaSuccess = (stream) => {
-    // try {
-    //   window.localStream.getTracks().forEach((track) => track.stop())
-    // } catch (e) {
-    //   console.log(e)
-    // }
+    try {
+      window.localStream.getTracks().forEach((track) => track.stop())
+    } catch (e) {
+      console.log(e)
+    }
 
-    // streams.push(window.localStream)
+    streams.push(window.localStream)
     window.localStream = stream
     localVideoref.current.srcObject = stream
 
@@ -403,8 +403,12 @@ const Video = (props) => {
   }
 
   const handleVideo = () => {
-    setvideo(!video)
-    getUserMedia()
+    console.log('handleVideo')
+    setvideo((prevVideo) => !prevVideo)
+    // getUserMedia()
+    window.localStream = stream
+    localVideoref.current.srcObject.getVideoTracks()[0].enabled =
+      !localVideoref.current.srcObject.getVideoTracks()[0].enabled
   }
 
   const handleAudio = () => {
@@ -501,7 +505,7 @@ const Video = (props) => {
             }}
           >
             <IconButton style={{ color: '#424242' }} onClick={handleVideo}>
-              {video === true ? <VideocamIcon /> : <VideocamOffIcon />}
+              {video == true ? <VideocamIcon /> : <VideocamOffIcon />}
             </IconButton>
 
             <IconButton style={{ color: '#f44336' }} onClick={handleEndCall}>
