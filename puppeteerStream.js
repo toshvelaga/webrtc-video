@@ -6,7 +6,10 @@ const args = process.argv.slice(2)
 const file = fs.createWriteStream(`./reports/videos/${args[0]}.mp4`)
 
 async function puppeteerStream() {
-  const browser = await launch()
+  const browser = await launch({
+    executablePath:
+      '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+  })
 
   const page = await browser.newPage()
   await page.goto('http://localhost:8000/demo')

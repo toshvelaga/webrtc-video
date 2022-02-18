@@ -4,7 +4,11 @@ const puppeteer = require('puppeteer')
 const args = process.argv.slice(2)
 
 ;(async () => {
-  const browser = await puppeteer.launch({ headless: true })
+  const browser = await puppeteer.launch({
+    headless: false,
+    executablePath:
+      '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+  })
 
   const page = await browser.newPage()
   // create a room called room
