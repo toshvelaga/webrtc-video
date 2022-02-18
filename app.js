@@ -30,6 +30,9 @@ if (process.env.NODE_ENV === 'production') {
 
 app.set('port', process.env.PORT || 4001)
 
+const recordRouter = require('./puppeteerStream')
+app.use('/', recordRouter)
+
 let connections = {}
 let timeOnline = {}
 

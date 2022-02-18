@@ -40,4 +40,4 @@ router.post('/api/record', async (req, res) => {
   return res.status(201).send('recording')
 })
 
-module.exports = router()
+module.exports = router
