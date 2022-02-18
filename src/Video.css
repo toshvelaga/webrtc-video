@@ -14,6 +14,12 @@ body {
   justify-content: center;
 }
 
+.username {
+  margin: 0;
+  font-weight: bold;
+  padding-right: 50px;
+}
+
 .flex-container {
   height: calc(100% - 150px);
   width: 100%;
@@ -48,4 +54,7 @@ body {
   bottom: 0px;
   width: 100%;
   height: auto;
+  background-color: whitesmoke;
+  color: whitesmoke;
+  text-align: center;
 }

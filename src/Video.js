@@ -434,9 +434,7 @@ const Video = (props) => {
       {askForUsername === true ? (
         <div>
           <div className='ask-for-username-container'>
-            <p style={{ margin: 0, fontWeight: 'bold', paddingRight: '50px' }}>
-              Set your username
-            </p>
+            <p className='username'>Set your username</p>
             <Input
               placeholder='Username'
               value={username}
@@ -477,14 +475,7 @@ const Video = (props) => {
       ) : (
         <div>
           {/* VIDEO CONTROLS */}
-          <div
-            className='btn-down'
-            style={{
-              backgroundColor: 'whitesmoke',
-              color: 'whitesmoke',
-              textAlign: 'center',
-            }}
-          >
+          <div className='btn-down'>
             <IconButton style={{ color: '#424242' }} onClick={handleVideo}>
               {video == true ? <VideocamIcon /> : <VideocamOffIcon />}
             </IconButton>
@@ -529,7 +520,6 @@ const Video = (props) => {
                   // margin '10px',
                   margin: '0',
                   padding: '0',
-
                   objectFit: 'fill',
                   width: '100%',
                   height: '100%',
