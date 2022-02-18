@@ -8,7 +8,7 @@ const args = process.argv.slice(2)
 
   const page = await browser.newPage()
   // create a room called room
-  await page.goto('https://video-meeting-socket.herokuapp.com/room')
+  await page.goto('http://localhost:8000/demo')
   await page.waitForSelector('button')
   await page.click('button')
   await page.waitForTimeout(2000)

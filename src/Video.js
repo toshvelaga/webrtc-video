@@ -57,9 +57,7 @@ const Video = (props) => {
   }
 
   useEffect(() => {
-    if (!window.location.pathname.includes('ghost')) {
-      getPermissions()
-    }
+    getPermissions()
   }, [])
 
   useEffect(() => {
@@ -516,11 +514,7 @@ const Video = (props) => {
             >
               <video
                 id='my-video'
-                ref={
-                  window.location.pathname.includes('/ghost')
-                    ? localVideoref
-                    : null
-                }
+                ref={localVideoref}
                 autoPlay
                 muted
                 style={{

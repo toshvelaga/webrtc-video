@@ -9,7 +9,7 @@ async function puppeteerStream() {
   const browser = await launch()
 
   const page = await browser.newPage()
-  await page.goto('https://video-meeting-socket.herokuapp.com/room')
+  await page.goto('http://localhost:8000/demo')
   await page.waitForSelector('button')
   await page.click('button')
 
