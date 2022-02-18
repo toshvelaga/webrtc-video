@@ -12,6 +12,8 @@ Developed with ReactJS, Node.js, SocketIO.
 
 Try Video Meeting here [video.sebastienbiollo.com](https://video.sebastienbiollo.com)
 
+Our version is deployed at https://video-meeting-socket.herokuapp.com/
+
 ### Try Out
 
 https://www.npmtrends.com/casperjs-vs-nightmare-vs-puppeteer-vs-slimerjs-vs-testcafe-vs-webdriverio-vs-phantomjs
