@@ -17,6 +17,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 import './Video.css'
 
 import axios from 'axios'
+import API from './api/api'
 
 const server_url =
   process.env.NODE_ENV === 'production'
@@ -429,7 +430,14 @@ const Video = (props) => {
     getMedia()
   }
 
-  const record = () => {}
+  console.log('THIS: ' + window.location.href)
+
+  const record = () => {
+    API.post('/record', {
+      url: window.location.href,
+      fileName: 'test',
+    })
+  }
 
   return (
     <div>
@@ -499,9 +507,7 @@ const Video = (props) => {
                 )}
               </IconButton>
             ) : null}
-            <button onClick={() => alert('add recording logic here')}>
-              Record
-            </button>
+            <button onClick={record}>Record</button>
           </div>
 
           <div className='container'>
