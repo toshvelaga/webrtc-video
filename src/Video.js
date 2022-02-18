@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import io from 'socket.io-client'
 import faker from 'faker'
-import RecordRTC, { invokeSaveAsDialog } from 'recordrtc'
 
 import { IconButton, Badge, Input, Button } from '@material-ui/core'
 import VideocamIcon from '@material-ui/icons/Videocam'
@@ -50,7 +49,6 @@ const Video = (props) => {
 
   //   const [streams, setstreams] = useState([])
   const streams = []
-  const recorder = useRef(null)
 
   connections = {}
 
@@ -60,14 +58,6 @@ const Video = (props) => {
 
   useEffect(() => {
     getPermissions()
-  }, [])
-
-  useEffect(() => {
-    const row = document.getElementById('my-video')
-
-    recorder.current = new RecordRTC(row, {
-      type: 'video',
-    })
   }, [])
 
   useEffect(() => {
@@ -443,19 +433,7 @@ const Video = (props) => {
     <div>
       {askForUsername === true ? (
         <div>
-          <div
-            style={{
-              background: 'white',
-              width: '30%',
-              height: 'auto',
-              padding: '20px',
-              minWidth: '400px',
-              textAlign: 'center',
-              margin: 'auto',
-              marginTop: '50px',
-              justifyContent: 'center',
-            }}
-          >
+          <div className='ask-for-username-container'>
             <p style={{ margin: 0, fontWeight: 'bold', paddingRight: '50px' }}>
               Set your username
             </p>
