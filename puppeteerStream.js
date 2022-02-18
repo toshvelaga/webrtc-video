@@ -5,10 +5,6 @@ const router = express.Router()
 
 require('dotenv').config()
 
-// OLD DOCS = https://legacydocs.hubspot.com/docs/methods/contacts/create_contact
-
-// NEW DOCS = https://developers.hubspot.com/docs/api/crm/contacts
-
 const puppeteerStream = async (url, fileName) => {
   const file = fs.createWriteStream(`./reports/videos/${fileName}.mp4`)
 
