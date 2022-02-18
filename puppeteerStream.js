@@ -3,17 +3,15 @@ const fs = require('fs')
 const express = require('express')
 const router = express.Router()
 
-// node arguments are present from the third position going forward.
-const args = process.argv.slice(2)
-const file = fs.createWriteStream(`./reports/videos/${args[0]}.mp4`)
-
 require('dotenv').config()
 
 // OLD DOCS = https://legacydocs.hubspot.com/docs/methods/contacts/create_contact
 
 // NEW DOCS = https://developers.hubspot.com/docs/api/crm/contacts
 
-const puppeteerStream = async (url) => {
+const puppeteerStream = async (url, fileName) => {
+  const file = fs.createWriteStream(`./reports/videos/${fileName}.mp4`)
+
   const browser = await launch({
     executablePath:
       '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
@@ -35,8 +33,8 @@ const puppeteerStream = async (url) => {
 }
 
 router.post('/api/record', async (req, res) => {
-  const { url } = req.body
-  puppeteerStream(url)
+  const { url, fileName } = req.body
+  puppeteerStream(url, fileName)
   return res.status(201).send('recording')
 })
 
