@@ -29,9 +29,34 @@ const puppeteerStream = async (url, fileName) => {
 }
 
 router.post('/api/record', async (req, res) => {
-  const { url, fileName } = req.body
-  puppeteerStream(url, fileName)
-  return res.status(201).send('recording')
+  // const { url, fileName } = req.body
+  // puppeteerStream(url, fileName)
+  // return res.status(201).send('recording')
+  const browser = await launch({
+    executablePath:
+      '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    defaultViewport: {
+      width: 1920,
+      height: 1080,
+    },
+  })
+
+  const page = await browser.newPage()
+  await page.goto('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
+  const stream = await getStream(page, { audio: true, video: true })
+  console.log('recording')
+
+  const head = {
+    // 'Content-Length': fileSize,
+    'Content-Type': 'video/mp4',
+  }
+  res.writeHead(200, head)
+  stream.pipe(res)
+
+  await page.waitForTimeout(8000)
+  await stream.destroy()
+  await browser.close()
+  console.log(res)
 })
 
 module.exports = router

@@ -6,6 +6,7 @@ const app = express()
 const bodyParser = require('body-parser')
 const path = require('path')
 var xss = require('xss')
+const { ffmpegConfig } = require('./ffmpegConfig')
 
 var server = http.createServer(app)
 
@@ -86,6 +87,45 @@ io.on('connection', (socket) => {
         }
       }
     }
+  })
+
+  let twitch =
+    'rtmp://dfw.contribute.live-video.net/app/' + process.env.TWITCH_STREAM_KEY
+  // FFMPEG LOGIC HERE
+  console.log(ffmpegConfig(twitch))
+
+  const ffmpeg = child_process.spawn('ffmpeg', ffmpegConfig(twitch))
+
+  // If FFmpeg stops for any reason, close the WebSocket connection.
+  ffmpeg.on('close', (code, signal) => {
+    console.log(
+      'FFmpeg child process closed, code ' + code + ', signal ' + signal
+    )
+    // ws.terminate()
+  })
+
+  // Handle STDIN pipe errors by logging to the console.
+  // These errors most commonly occur when FFmpeg closes and there is still
+  // data to write.  If left unhandled, the server will crash.
+  ffmpeg.stdin.on('error', (e) => {
+    console.log('FFmpeg STDIN Error', e)
+  })
+
+  // FFmpeg outputs all of its messages to STDERR.  Let's log them to the console.
+  ffmpeg.stderr.on('data', (data) => {
+    console.log('FFmpeg STDERR:', data.toString())
+  })
+
+  // When data comes in from the WebSocket, write it to FFmpeg's STDIN.
+  socket.on('message', (msg) => {
+    console.log('DATA', msg)
+    ffmpeg.stdin.write(msg)
+  })
+
+  // If the client disconnects, stop FFmpeg.
+  socket.conn.on('close', (e) => {
+    console.log('kill: SIGINT')
+    ffmpeg.kill('SIGINT')
   })
 })
 
