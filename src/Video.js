@@ -499,6 +499,9 @@ const Video = (props) => {
                 )}
               </IconButton>
             ) : null}
+            <button onClick={() => alert('add recording logic here')}>
+              Record
+            </button>
           </div>
 
           <div className='container'>
