@@ -429,6 +429,8 @@ const Video = (props) => {
     getMedia()
   }
 
+  const record = () => {}
+
   return (
     <div>
       {askForUsername === true ? (
