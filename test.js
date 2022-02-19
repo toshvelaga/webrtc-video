@@ -4,6 +4,8 @@ const { launch, getStream } = require('puppeteer-stream')
 const fs = require('fs')
 const { exec } = require('child_process')
 
+// puppeteer stream + FFmpeg example: https://github.com/Flam3rboy/puppeteer-stream/blob/main/examples/ffmpeg.js
+
 async function test() {
   const browser = await launch({
     executablePath:
