@@ -8,7 +8,7 @@ require('dotenv').config()
 // puppeteer stream + FFmpeg example: https://github.com/Flam3rboy/puppeteer-stream/blob/main/examples/ffmpeg.js
 
 const ffmpegConfig = (twitch) => {
-  return `ffmpeg -i - -v error -c:v libx264 -preset veryfast -tune zerolatency -c:a aac -strict -2 -ar 44100 -b:a 64k -y -use_wallclock_as_timestamps 1 -async 1 -bufsize 1000 -f flv ${twitch}`
+  return `ffmpeg -i - -v error -c:v libx264 -preset veryfast -tune zerolatency -c:a aac -f flv ${twitch}`
 }
 
 let twitch =
@@ -29,7 +29,7 @@ async function test() {
   const stream = await getStream(page, {
     audio: true,
     video: true,
-    frameSize: 1000,
+    // frameSize: 1000,
   })
   console.log('recording')
   // this will pipe the stream to ffmpeg and convert the webm to mp4 format
