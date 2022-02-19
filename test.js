@@ -1,10 +1,18 @@
 // NOTICE: install ffmpeg first
 const { launch, getStream } = require('puppeteer-stream')
-// const { launch, getStream } = require('../dist/PuppeteerStream')
 const fs = require('fs')
 const { exec } = require('child_process')
 
+require('dotenv').config()
+
 // puppeteer stream + FFmpeg example: https://github.com/Flam3rboy/puppeteer-stream/blob/main/examples/ffmpeg.js
+
+const ffmpegConfig = (twitch) => {
+  return `ffmpeg -i - -v error -c:v libx264 -preset veryfast -tune zerolatency -c:a aac -strict -2 -ar 44100 -b:a 64k -y -use_wallclock_as_timestamps 1 -async 1 -bufsize 1000 -f flv ${twitch}`
+}
+
+let twitch =
+  'rtmp://dfw.contribute.live-video.net/app/' + process.env.TWITCH_STREAM_KEY
 
 async function test() {
   const browser = await launch({
@@ -25,7 +33,8 @@ async function test() {
   })
   console.log('recording')
   // this will pipe the stream to ffmpeg and convert the webm to mp4 format
-  const ffmpeg = exec(`ffmpeg -y -i - reports/videos/output.mp4`)
+  const ffmpeg = exec(ffmpegConfig(twitch))
+
   ffmpeg.stderr.on('data', (chunk) => {
     console.log(chunk.toString())
   })
@@ -43,7 +52,7 @@ async function test() {
     ffmpeg.kill()
 
     console.log('finished')
-  }, 1000 * 10)
+  }, 1000 * 40)
 }
 
 test()
