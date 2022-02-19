@@ -23,7 +23,7 @@ async function test() {
   })
   console.log('recording')
   // this will pipe the stream to ffmpeg and convert the webm to mp4 format
-  const ffmpeg = exec(`ffmpeg -y -i - reports/output.mp4`)
+  const ffmpeg = exec(`ffmpeg -y -i - reports/videos/output.mp4`)
   ffmpeg.stderr.on('data', (chunk) => {
     console.log(chunk.toString())
   })
@@ -32,7 +32,6 @@ async function test() {
 
   setTimeout(async () => {
     await stream.destroy()
-    await browser.close()
     stream.on('end', () => {
       console.log('stream has ended')
     })
