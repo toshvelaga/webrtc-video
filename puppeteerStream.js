@@ -58,4 +58,12 @@ router.post('/api/record', async (req, res) => {
   record(url)
 })
 
+router.post('/api/record/stop', async (req, res) => {
+  const ffmpeg = exec('sudo killall ffmpeg')
+  ffmpeg.stdin.setEncoding('utf8')
+  ffmpeg.stdin.write('q')
+  ffmpeg.stdin.end()
+  ffmpeg.kill()
+})
+
 module.exports = router
