@@ -35,7 +35,6 @@ var elms = 0
 const Video = (props) => {
   const localVideoref = useRef(null)
   const stream = useRef(null)
-  const [videoUrl, setvideoUrl] = useState('')
 
   const [video, setvideo] = useState(true)
   const [audio, setaudio] = useState(true)
@@ -56,6 +55,8 @@ const Video = (props) => {
   const peerConnectionConfig = {
     iceServers: iceServers,
   }
+
+  console.log(window.location.pathname.includes('ghost'))
 
   useEffect(() => {
     getPermissions()
@@ -335,9 +336,6 @@ const Video = (props) => {
                 minWidth: cssMesure.minWidth,
                 minHeight: cssMesure.minHeight,
                 maxHeight: '100%',
-                // margin: '10px',
-                // borderStyle: 'solid',
-                // borderColor: '#bdbdbd',
                 objectFit: 'fill',
               }
               for (let i in css) video.style[i] = css[i]
@@ -472,6 +470,7 @@ const Video = (props) => {
               paddingTop: '40px',
             }}
           >
+            {/* VIDEO PREVIEW BEFORE ENTERING ROOM */}
             <video
               id='my-video'
               ref={localVideoref}
@@ -532,9 +531,8 @@ const Video = (props) => {
                 autoPlay
                 muted
                 style={{
-                  // borderStyle: 'solid',
-                  // borderColor: '#bdbdbd',
-                  // margin '10px',
+                  borderStyle: 'solid',
+                  borderColor: '#bdbdbd',
                   margin: '0',
                   padding: '0',
                   objectFit: 'fill',
@@ -542,7 +540,6 @@ const Video = (props) => {
                   height: '100%',
                 }}
               ></video>
-              {videoUrl ? <video controls src={videoUrl} /> : null}
             </Row>
           </div>
         </div>
