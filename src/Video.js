@@ -435,7 +435,6 @@ const Video = (props) => {
   const record = () => {
     API.post('/record', {
       url: window.location.href,
-      fileName: 'test',
     })
   }
 

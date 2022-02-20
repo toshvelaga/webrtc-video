@@ -92,7 +92,6 @@ io.on('connection', (socket) => {
   let twitch =
     'rtmp://dfw.contribute.live-video.net/app/' + process.env.TWITCH_STREAM_KEY
   // FFMPEG LOGIC HERE
-  console.log(ffmpegConfig(twitch))
 
   const ffmpeg = child_process.spawn('ffmpeg', ffmpegConfig(twitch))
 
