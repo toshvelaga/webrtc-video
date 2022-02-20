@@ -1,37 +1,18 @@
 const { launch, getStream } = require('puppeteer-stream')
-const fs = require('fs')
 const express = require('express')
+const { exec } = require('child_process')
 const router = express.Router()
 
 require('dotenv').config()
 
-const puppeteerStream = async (url, fileName) => {
-  const file = fs.createWriteStream(`./reports/videos/${fileName}.mp4`)
-
-  const browser = await launch({
-    executablePath:
-      '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-  })
-
-  const page = await browser.newPage()
-  await page.goto(url)
-  await page.waitForSelector('button')
-  await page.click('button')
-
-  // records audio and video
-  const stream = await getStream(page, { audio: true, video: true })
-  stream.pipe(file)
-
-  await page.waitForTimeout(8000)
-  await stream.destroy()
-  await browser.close()
-  file.close()
+const ffmpegConfig = (twitch) => {
+  return `ffmpeg -i - -v error -c:v libx264 -preset veryfast -tune zerolatency -c:a aac -f flv ${twitch}`
 }
 
-router.post('/api/record', async (req, res) => {
-  // const { url, fileName } = req.body
-  // puppeteerStream(url, fileName)
-  // return res.status(201).send('recording')
+let twitch =
+  'rtmp://dfw.contribute.live-video.net/app/' + process.env.TWITCH_STREAM_KEY
+
+const record = async (url) => {
   const browser = await launch({
     executablePath:
       '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
@@ -42,21 +23,39 @@ router.post('/api/record', async (req, res) => {
   })
 
   const page = await browser.newPage()
-  await page.goto('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
-  const stream = await getStream(page, { audio: true, video: true })
+  await page.goto(url)
+  const stream = await getStream(page, {
+    audio: true,
+    video: true,
+    // frameSize: 1000,
+  })
   console.log('recording')
+  // this will pipe the stream to ffmpeg and convert the webm to mp4 format
+  const ffmpeg = exec(ffmpegConfig(twitch))
 
-  const head = {
-    // 'Content-Length': fileSize,
-    'Content-Type': 'video/mp4',
-  }
-  res.writeHead(200, head)
-  stream.pipe(res)
+  ffmpeg.stderr.on('data', (chunk) => {
+    console.log(chunk.toString())
+  })
 
-  await page.waitForTimeout(8000)
-  await stream.destroy()
-  await browser.close()
-  console.log(res)
+  stream.pipe(ffmpeg.stdin)
+
+  //   setTimeout(async () => {
+  //     await stream.destroy()
+  //     stream.on('end', () => {
+  //       console.log('stream has ended')
+  //     })
+  //     ffmpeg.stdin.setEncoding('utf8')
+  //     ffmpeg.stdin.write('q')
+  //     ffmpeg.stdin.end()
+  //     ffmpeg.kill()
+
+  //     console.log('finished')
+  //   }, 1000 * 40)
+}
+
+router.post('/api/record', async (req, res) => {
+  const { url } = req.body
+  record(url)
 })
 
 module.exports = router
