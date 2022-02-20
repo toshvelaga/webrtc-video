@@ -1,11 +1,9 @@
-const child_process = require('child_process') // To be used later for running FFmpeg
 const express = require('express')
 const http = require('http')
 var cors = require('cors')
 const app = express()
 const bodyParser = require('body-parser')
 const path = require('path')
-const { ffmpegConfig } = require('./ffmpegConfig')
 
 var server = http.createServer(app)
 
@@ -27,30 +25,37 @@ if (process.env.NODE_ENV === 'production') {
 
 app.set('port', process.env.PORT || 4001)
 
+// API route to record webRTC meeting
 const recordRouter = require('./puppeteerStream')
 app.use('/', recordRouter)
 
 let connections = {}
 let timeOnline = {}
 
+const getPathFromUrl = (url) => {
+  return url.split('?')[0]
+}
+
 io.on('connection', (socket) => {
   socket.on('join-call', (path) => {
-    if (connections[path] === undefined) {
-      connections[path] = []
+    let pathWoQuery = getPathFromUrl(path)
+    if (connections[pathWoQuery] === undefined) {
+      connections[pathWoQuery] = []
     }
-    connections[path].push(socket.id)
+    connections[pathWoQuery].push(socket.id)
 
     timeOnline[socket.id] = new Date()
 
-    for (let a = 0; a < connections[path].length; ++a) {
-      io.to(connections[path][a]).emit(
+    for (let a = 0; a < connections[pathWoQuery].length; ++a) {
+      io.to(connections[pathWoQuery][a]).emit(
         'user-joined',
         socket.id,
-        connections[path]
+        connections[pathWoQuery]
       )
     }
 
-    console.log(path, connections[path])
+    console.log(pathWoQuery, connections[pathWoQuery])
+    console.log(connections)
   })
 
   socket.on('signal', (toId, message) => {
