@@ -438,6 +438,12 @@ const Video = (props) => {
     })
   }
 
+  const stopRecording = () => {
+    API.post('/record/stop', {
+      url: window.location.href,
+    })
+  }
+
   return (
     <div>
       {askForUsername === true ? (
@@ -507,6 +513,7 @@ const Video = (props) => {
               </IconButton>
             ) : null}
             <button onClick={record}>Record</button>
+            <button onClick={stopRecording}>Stop Recording</button>
           </div>
 
           <div className='container'>
