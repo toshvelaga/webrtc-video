@@ -5,7 +5,6 @@ var cors = require('cors')
 const app = express()
 const bodyParser = require('body-parser')
 const path = require('path')
-var xss = require('xss')
 const { ffmpegConfig } = require('./ffmpegConfig')
 
 var server = http.createServer(app)
@@ -15,10 +14,6 @@ const io = require('socket.io')(server, {
     origin: '*',
   },
 })
-
-// const accountSid = process.env.TWILIO_ACCOUNT_SID
-// const authToken = process.env.TWILIO_AUTH_TOKEN
-// const client = require('twilio')(accountSid, authToken)
 
 app.use(cors())
 app.use(bodyParser.json())
@@ -88,74 +83,8 @@ io.on('connection', (socket) => {
       }
     }
   })
-
-  let twitch =
-    'rtmp://dfw.contribute.live-video.net/app/' + process.env.TWITCH_STREAM_KEY
-  // FFMPEG LOGIC HERE
-
-  const ffmpeg = child_process.spawn('ffmpeg', ffmpegConfig(twitch))
-
-  // If FFmpeg stops for any reason, close the WebSocket connection.
-  ffmpeg.on('close', (code, signal) => {
-    console.log(
-      'FFmpeg child process closed, code ' + code + ', signal ' + signal
-    )
-    // ws.terminate()
-  })
-
-  // Handle STDIN pipe errors by logging to the console.
-  // These errors most commonly occur when FFmpeg closes and there is still
-  // data to write.  If left unhandled, the server will crash.
-  ffmpeg.stdin.on('error', (e) => {
-    console.log('FFmpeg STDIN Error', e)
-  })
-
-  // FFmpeg outputs all of its messages to STDERR.  Let's log them to the console.
-  ffmpeg.stderr.on('data', (data) => {
-    console.log('FFmpeg STDERR:', data.toString())
-  })
-
-  // When data comes in from the WebSocket, write it to FFmpeg's STDIN.
-  socket.on('message', (msg) => {
-    console.log('DATA', msg)
-    ffmpeg.stdin.write(msg)
-  })
-
-  // If the client disconnects, stop FFmpeg.
-  socket.conn.on('close', (e) => {
-    console.log('kill: SIGINT')
-    ffmpeg.kill('SIGINT')
-  })
 })
 
 server.listen(app.get('port'), () => {
   console.log('listening on', app.get('port'))
 })
-
-// twilio STUN AND TURN SERVER CREDENTIALS
-
-// app.post('/api/twilio', async (req, res) => {
-//   const baseUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Tokens.json`
-
-//   const token = await axios
-//     .post(
-//       baseUrl,
-//       {},
-//       {
-//         auth: {
-//           username: accountSid,
-//           password: authToken,
-//         },
-//       }
-//     )
-//     .then((res) => {
-//       return res.data
-//     })
-//     .catch((err) => {
-//       return err
-//     })
-
-//   console.log(token)
-
-//   res.json(token)
-// })

@@ -519,7 +519,7 @@ const Video = (props) => {
             <div style={{ paddingTop: '20px', paddingBottom: '20px' }}>
               <Input value={window.location.href} disable='true'></Input>
             </div>
-            {/* THE ACTUAL VIDEOS */}
+            {/* THE ACTUAL VIDEOS IN THE ROOM */}
             <Row
               id='main'
               className='flex-container'
