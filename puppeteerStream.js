@@ -24,6 +24,8 @@ const record = async (url) => {
 
   const page = await browser.newPage()
   await page.goto(url)
+  await page.waitForSelector('button')
+  await page.click('button')
   const stream = await getStream(page, {
     audio: true,
     video: true,
@@ -64,6 +66,7 @@ router.post('/api/record/stop', async (req, res) => {
   ffmpeg.stdin.write('q')
   ffmpeg.stdin.end()
   ffmpeg.kill()
+  console.log('finished')
 })
 
 module.exports = router

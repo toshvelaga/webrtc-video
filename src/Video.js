@@ -40,9 +40,6 @@ const Video = (props) => {
   const [audio, setaudio] = useState(true)
   const [screen, setscreen] = useState(false)
   const [screenAvailable, setscreenAvailable] = useState(true)
-  const [messages, setmessages] = useState([])
-  const [message, setmessage] = useState('')
-  const [newmessages, setnewmessages] = useState(0)
   const [askForUsername, setaskForUsername] = useState(true)
   const [username, setusername] = useState(faker.internet.userName())
   const [iceServers, seticeServers] = useState([])
@@ -438,14 +435,8 @@ const Video = (props) => {
   }
 
   const stopRecording = () => {
-    API.post('/record/stop', {
-      url: window.location.href,
-    })
+    API.post('/record/stop')
   }
-
-  console.log(streams)
-
-  console.log(window.localStream)
 
   return (
     <div>
