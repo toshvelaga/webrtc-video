@@ -24,14 +24,6 @@ const server_url =
     ? 'https://video-meeting-socket.herokuapp.com'
     : 'http://localhost:4001'
 
-console.log(server_url)
-
-var connections = {}
-
-var socket = null
-var socketId = null
-var elms = 0
-
 const Video = (props) => {
   const localVideoref = useRef(null)
   const stream = useRef(null)
@@ -46,7 +38,11 @@ const Video = (props) => {
 
   const [streams, setstreams] = useState([])
 
-  connections = {}
+  var connections = {}
+
+  var socket = null
+  var socketId = null
+  var elms = 0
 
   const peerConnectionConfig = {
     iceServers: iceServers,
@@ -74,9 +70,7 @@ const Video = (props) => {
         audio: true,
       })
       .then((stream) => {
-        console.log(stream)
         streams.push(stream)
-
         window.localStream = stream
         localVideoref.current.srcObject = stream
       })
@@ -140,29 +134,29 @@ const Video = (props) => {
             console.log(e)
           }
 
-          let blackSilence = (...args) =>
-            new MediaStream([black(...args), silence()])
-          window.localStream = blackSilence()
-          localVideoref.current.srcObject = window.localStream
+          // let blackSilence = (...args) =>
+          //   new MediaStream([black(...args), silence()])
+          // window.localStream = blackSilence()
+          // localVideoref.current.srcObject = window.localStream
 
-          for (let id in connections) {
-            connections[id].addStream(window.localStream)
+          // for (let id in connections) {
+          //   connections[id].addStream(window.localStream)
 
-            connections[id].createOffer().then((description) => {
-              connections[id]
-                .setLocalDescription(description)
-                .then(() => {
-                  socket.emit(
-                    'signal',
-                    id,
-                    JSON.stringify({
-                      sdp: connections[id].localDescription,
-                    })
-                  )
-                })
-                .catch((e) => console.log(e))
-            })
-          }
+          //   connections[id].createOffer().then((description) => {
+          //     connections[id]
+          //       .setLocalDescription(description)
+          //       .then(() => {
+          //         socket.emit(
+          //           'signal',
+          //           id,
+          //           JSON.stringify({
+          //             sdp: connections[id].localDescription,
+          //           })
+          //         )
+          //       })
+          //       .catch((e) => console.log(e))
+          //   })
+          // }
         })
     )
   }
@@ -229,6 +223,8 @@ const Video = (props) => {
     )
   }
 
+  console.log(connections)
+
   const gotMessageFromServer = (fromId, message) => {
     var signal = JSON.parse(message)
 
@@ -282,16 +278,18 @@ const Video = (props) => {
         let video = document.querySelector(`[data-socket="${id}"]`)
         if (video !== null) {
           elms--
+          //remove video from DOM
           video.parentNode.removeChild(video)
 
           let main = document.getElementById('main')
+          // resize the remaining videos height and width
           changeCssVideos(main, elms)
         }
       })
 
       socket.on('user-joined', (id, clients) => {
-        console.log('clients ' + clients)
         console.log('id: ' + id)
+        console.log('clients ' + clients)
 
         clients.forEach((socketListId) => {
           console.log('socketListId ' + socketListId)
@@ -300,7 +298,7 @@ const Video = (props) => {
             peerConnectionConfig
           )
           // Wait for their ice candidate
-          connections[socketListId].onicecandidate = function (event) {
+          connections[socketListId].onicecandidate = (event) => {
             if (event.candidate != null) {
               socket.emit(
                 'signal',
@@ -424,6 +422,7 @@ const Video = (props) => {
   }
 
   console.log('THIS: ' + window.location.href.includes('ghost'))
+  console.log('connections: ' + JSON.stringify(connections))
 
   const record = () => {
     API.post('/record', {

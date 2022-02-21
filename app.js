@@ -30,8 +30,14 @@ const recordRouter = require('./puppeteerStream')
 app.use('/', recordRouter)
 
 let connections = {}
-// connections example: { http://localhost:8000/demo [ 'msZkzHGsJ9pd3IzHAAAB', '748f9D8giwRR5uXtAAAD' ] }
+// connections example: { 'http://localhost:8000/demo':
+//   [ 'msZkzHGsJ9pd3IzHAAAB', '748f9D8giwRR5uXtAAAD' ]
+// }
 let timeOnline = {}
+// timeOnline example: {
+//   H0RbYU2nFg9dDcjwAAAB: 2022-02-21T06:47:23.715Z,
+//   uZ9Fj1R0Q2VS3EgOAAAD: 2022-02-21T06:47:35.652Z
+// }
 
 const removeQueryParamFromUrl = (url) => {
   return url.split('?')[0]
@@ -51,6 +57,7 @@ io.on('connection', (socket) => {
     connections[editedPath].push(socket.id)
 
     timeOnline[socket.id] = new Date()
+    console.log(timeOnline)
 
     // loop over length of array in room which contains users
     for (let a = 0; a < connections[editedPath].length; ++a) {
@@ -70,8 +77,6 @@ io.on('connection', (socket) => {
     io.to(toId).emit('signal', socket.id, message)
   })
 
-  console.log(JSON.parse(JSON.stringify(Object.entries(connections))))
-
   socket.on('disconnect', () => {
     var diffTime = Math.abs(timeOnline[socket.id] - new Date())
     var key
@@ -89,6 +94,7 @@ io.on('connection', (socket) => {
           }
 
           var index = connections[key].indexOf(socket.id)
+          // remove user from room
           connections[key].splice(index, 1)
 
           console.log(key, socket.id, Math.ceil(diffTime / 1000))
