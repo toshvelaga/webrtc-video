@@ -428,7 +428,7 @@ const Video = (props) => {
     getMedia()
   }
 
-  console.log('THIS: ' + window.location.href)
+  console.log('THIS: ' + window.location.href.includes('ghost'))
 
   const record = () => {
     API.post('/record', {

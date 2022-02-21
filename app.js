@@ -38,10 +38,14 @@ const getPathFromUrl = (url) => {
 
 io.on('connection', (socket) => {
   socket.on('join-call', (path) => {
+    // PATH WITHOUT QUERY PARAMS
+    console.log(path.includes('?ghost'))
+
     let pathWoQuery = getPathFromUrl(path)
     if (connections[pathWoQuery] === undefined) {
       connections[pathWoQuery] = []
     }
+
     connections[pathWoQuery].push(socket.id)
 
     timeOnline[socket.id] = new Date()

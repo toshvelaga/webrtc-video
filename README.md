@@ -1,36 +1,12 @@
 # Video Meeting
 
+Most of the code is based off this [excellent repo](https://github.com/0x5eba/Video-Meeting) by [Sebastien Biollo](https://github.com/x5eb)
+
 Google Meet / Zoom clone in a few lines of code.
 
-Video Meeting is a video conference website that lets you stay in touch with all your friends.
-
-Developed with ReactJS, Node.js, SocketIO.
-
-![Website](https://i.imgur.com/HhZD01o.jpg)
-
-### Website
-
-Try Video Meeting here [video.sebastienbiollo.com](https://video.sebastienbiollo.com)
-
-Our version is deployed at https://video-meeting-socket.herokuapp.com/
-
-### Try Out
-
-https://www.npmtrends.com/casperjs-vs-nightmare-vs-puppeteer-vs-slimerjs-vs-testcafe-vs-webdriverio-vs-phantomjs
-
-- casperjs
-- phantomjs
-
-### Features
-
-- Is 100% free and open-source
-- No account needed
-- Unlimited users
-- Messaging chat and video streaming in real-time
-- Screen sharing to present documents, slides, and more
-- Everyting is peer-to-peer thanks to webrtc
+Developed with ReactJS, Node.js, SocketIO. Also uses puppeteer-stream
 
 ### Local setup
 
-1. `yarn install`
-2. `yarn dev`
+1. `npm install`
+2. `npm start`
