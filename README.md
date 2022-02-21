@@ -6,6 +6,8 @@ Google Meet / Zoom clone in a few lines of code.
 
 Developed with ReactJS, Node.js, SocketIO. Also uses puppeteer-stream
 
+Main logic is in Video.js (frontend) and app.js (server)
+
 ### Local setup
 
 1. `npm install`

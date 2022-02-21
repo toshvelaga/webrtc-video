@@ -297,6 +297,7 @@ const Video = (props) => {
 
       socket.on('user-joined', (id, clients) => {
         console.log('clients ' + clients)
+        console.log('id: ' + id)
 
         clients.forEach((socketListId) => {
           console.log('socketListId ' + socketListId)
@@ -441,6 +442,10 @@ const Video = (props) => {
       url: window.location.href,
     })
   }
+
+  console.log(streams)
+
+  console.log(window.localStream)
 
   return (
     <div>

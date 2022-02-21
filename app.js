@@ -63,6 +63,7 @@ io.on('connection', (socket) => {
   })
 
   socket.on('signal', (toId, message) => {
+    console.log('signal: ', toId, socket.id)
     io.to(toId).emit('signal', socket.id, message)
   })
 
