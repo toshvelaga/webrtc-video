@@ -32,38 +32,38 @@ app.use('/', recordRouter)
 let connections = {}
 let timeOnline = {}
 
-const getPathFromUrl = (url) => {
+const removeQueryParamFromUrl = (url) => {
   return url.split('?')[0]
 }
 
 io.on('connection', (socket) => {
   socket.on('join-call', (path) => {
-    // PATH WITHOUT QUERY PARAMS
+    //editedPath is without query params
+    const editedPath = removeQueryParamFromUrl(path)
+
     console.log(path.includes('?ghost'))
-
-    let pathWoQuery = getPathFromUrl(path)
-    if (connections[pathWoQuery] === undefined) {
-      connections[pathWoQuery] = []
+    // if no connection array exists for this path, create new one with empty array
+    if (connections[editedPath] === undefined) {
+      connections[editedPath] = []
     }
-
-    connections[pathWoQuery].push(socket.id)
+    // push socket.id into array
+    connections[editedPath].push(socket.id)
 
     timeOnline[socket.id] = new Date()
 
-    for (let a = 0; a < connections[pathWoQuery].length; ++a) {
-      io.to(connections[pathWoQuery][a]).emit(
+    for (let a = 0; a < connections[editedPath].length; ++a) {
+      io.to(connections[editedPath][a]).emit(
         'user-joined',
         socket.id,
-        connections[pathWoQuery]
+        connections[editedPath]
       )
     }
 
-    console.log(pathWoQuery, connections[pathWoQuery])
+    console.log(editedPath, connections[editedPath])
     console.log(connections)
   })
 
   socket.on('signal', (toId, message) => {
-    console.log('signal: ', toId, socket.id)
     io.to(toId).emit('signal', socket.id, message)
   })
 
