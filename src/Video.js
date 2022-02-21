@@ -44,20 +44,13 @@ const Video = (props) => {
   const [username, setusername] = useState(faker.internet.userName())
   const [iceServers, seticeServers] = useState([])
 
-  //   const [streams, setstreams] = useState([])
-  const streams = []
+  const [streams, setstreams] = useState([])
 
   connections = {}
 
   const peerConnectionConfig = {
     iceServers: iceServers,
   }
-
-  console.log(window.location.pathname.includes('ghost'))
-
-  useEffect(() => {
-    getPermissions()
-  }, [])
 
   useEffect(() => {
     axios
@@ -68,6 +61,10 @@ const Video = (props) => {
         seticeServers(res.data.ice_servers)
       })
       .catch((err) => console.log(err))
+  }, [])
+
+  useEffect(() => {
+    getPermissions()
   }, [])
 
   const getPermissions = async () => {
