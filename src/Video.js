@@ -302,14 +302,13 @@ const Video = () => {
           }
 
           // Wait for their video stream
-          connections[socketListId].onaddstream = (event) => {
+          connections[socketListId].ontrack = (event) => {
             var searchVidep = document.querySelector(
               `[data-socket="${socketListId}"]`
             )
             if (searchVidep !== null) {
               console.log('searchVidep ' + searchVidep)
-              // if i don't do this check it make an empyt square
-              searchVidep.srcObject = event.stream
+              searchVidep.srcObject = event.streams[0]
             } else {
               elms = clients.length
               let main = document.getElementById('main')
