@@ -121,44 +121,44 @@ const Video = () => {
       })
     }
 
-    stream.getTracks().forEach(
-      (track) =>
-        (track.onended = () => {
-          setvideo(false)
-          setaudio(false)
+    // stream.getTracks().forEach(
+    //   (track) =>
+    //     (track.onended = () => {
+    //       setvideo(false)
+    //       setaudio(false)
 
-          try {
-            let tracks = localVideoref.current.srcObject.getTracks()
-            tracks.forEach((track) => track.stop())
-          } catch (e) {
-            console.log(e)
-          }
+    //       try {
+    //         let tracks = localVideoref.current.srcObject.getTracks()
+    //         tracks.forEach((track) => track.stop())
+    //       } catch (e) {
+    //         console.log(e)
+    //       }
 
-          // let blackSilence = (...args) =>
-          //   new MediaStream([black(...args), silence()])
-          // window.localStream = blackSilence()
-          // localVideoref.current.srcObject = window.localStream
+    //       let blackSilence = (...args) =>
+    //         new MediaStream([black(...args), silence()])
+    //       window.localStream = blackSilence()
+    //       localVideoref.current.srcObject = window.localStream
 
-          // for (let id in connections) {
-          //   connections[id].addStream(window.localStream)
+    //       for (let id in connections) {
+    //         connections[id].addStream(window.localStream)
 
-          //   connections[id].createOffer().then((description) => {
-          //     connections[id]
-          //       .setLocalDescription(description)
-          //       .then(() => {
-          //         socket.emit(
-          //           'signal',
-          //           id,
-          //           JSON.stringify({
-          //             sdp: connections[id].localDescription,
-          //           })
-          //         )
-          //       })
-          //       .catch((e) => console.log(e))
-          //   })
-          // }
-        })
-    )
+    //         connections[id].createOffer().then((description) => {
+    //           connections[id]
+    //             .setLocalDescription(description)
+    //             .then(() => {
+    //               socket.emit(
+    //                 'signal',
+    //                 id,
+    //                 JSON.stringify({
+    //                   sdp: connections[id].localDescription,
+    //                 })
+    //               )
+    //             })
+    //             .catch((e) => console.log(e))
+    //         })
+    //       }
+    //     })
+    // )
   }
 
   // const getDislayMedia = () => {
