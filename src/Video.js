@@ -17,14 +17,13 @@ import 'bootstrap/dist/css/bootstrap.css'
 import './Video.css'
 
 import axios from 'axios'
-import API from './api/api'
 
 const server_url =
   process.env.NODE_ENV === 'production'
     ? 'https://video-meeting-socket.herokuapp.com'
     : 'http://localhost:4001'
 
-const Video = (props) => {
+const Video = () => {
   const localVideoref = useRef(null)
   const stream = useRef(null)
 
@@ -227,8 +226,6 @@ const Video = (props) => {
   //   )
   // }
 
-  console.log(connections)
-
   const gotMessageFromServer = (fromId, message) => {
     var signal = JSON.parse(message)
 
@@ -292,12 +289,7 @@ const Video = (props) => {
       })
 
       socket.on('user-joined', (id, clients) => {
-        console.log('id: ' + id)
-        console.log('clients ' + clients)
-
         clients.forEach((socketListId) => {
-          console.log('socketListId ' + socketListId)
-
           connections[socketListId] = new RTCPeerConnection(
             peerConnectionConfig
           )
@@ -314,7 +306,6 @@ const Video = (props) => {
 
           // Wait for their video stream
           connections[socketListId].onaddstream = (event) => {
-            // TODO mute button, full screen button
             var searchVidep = document.querySelector(
               `[data-socket="${socketListId}"]`
             )
@@ -345,14 +336,11 @@ const Video = (props) => {
               video.playsinline = true
 
               main.appendChild(video)
-
-              console.log(video.srcObject)
             }
           }
 
           // Add the local video stream
           if (window.localStream !== undefined && window.localStream !== null) {
-            console.log(window.localStream)
             connections[socketListId].addStream(window.localStream)
           } else {
             let blackSilence = (...args) =>
@@ -370,6 +358,7 @@ const Video = (props) => {
               connections[id2].addStream(window.localStream)
             } catch (e) {}
 
+            // eslint-disable-next-line no-loop-func
             connections[id2].createOffer().then((description) => {
               connections[id2]
                 .setLocalDescription(description)
@@ -423,19 +412,6 @@ const Video = (props) => {
   const connect = () => {
     setaskForUsername(false)
     getMedia()
-  }
-
-  console.log('THIS: ' + window.location.href.includes('ghost'))
-  console.log('connections: ' + JSON.stringify(connections))
-
-  const record = () => {
-    API.post('/record', {
-      url: window.location.href,
-    })
-  }
-
-  const stopRecording = () => {
-    API.post('/record/stop')
   }
 
   return (
@@ -501,8 +477,6 @@ const Video = (props) => {
                 )}
               </IconButton>
             ) : null}
-            <button onClick={record}>Record</button>
-            <button onClick={stopRecording}>Stop Recording</button>
           </div>
 
           <div className='container'>

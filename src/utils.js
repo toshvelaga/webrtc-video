@@ -1,3 +1,5 @@
+import API from './api/api'
+
 export const isChrome = () => {
   let userAgent = (navigator && (navigator.userAgent || '')).toLowerCase()
   let vendor = (navigator && (navigator.vendor || '')).toLowerCase()
@@ -60,4 +62,14 @@ export const changeCssVideos = (main, elms) => {
   }
 
   return { minWidth, minHeight, width, height }
+}
+
+export const record = () => {
+  return API.post('/record', {
+    url: window.location.href,
+  })
+}
+
+export const stopRecording = () => {
+  return API.post('/record/stop')
 }
