@@ -345,7 +345,10 @@ const Video = () => {
             let blackSilence = (...args) =>
               new MediaStream([black(...args), silence()])
             window.localStream = blackSilence()
-            connections[socketListId].addStream(window.localStream)
+            window.localStream.getTracks().forEach(function (track) {
+              connections[socketListId].addTrack(track, window.localStream)
+            })
+            // connections[socketListId].addStream(window.localStream)
           }
         })
 
@@ -354,7 +357,10 @@ const Video = () => {
             if (id2 === socketId) continue
 
             try {
-              connections[id2].addStream(window.localStream)
+              window.localStream.getTracks().forEach(function (track) {
+                connections[id2].addTrack(track, window.localStream)
+              })
+              // connections[id2].addStream(window.localStream)
             } catch (e) {}
 
             // eslint-disable-next-line no-loop-func
