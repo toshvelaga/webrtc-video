@@ -58,3 +58,11 @@ body {
   color: whitesmoke;
   text-align: center;
 }
+
+.video-preview {
+  border-style: solid;
+  border-color: #bdbdbd;
+  object-fit: fill;
+  width: 60%;
+  height: 30%;
+}

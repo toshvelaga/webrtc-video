@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import io from 'socket.io-client'
 import faker from 'faker'
 
-import { IconButton, Badge, Input, Button } from '@material-ui/core'
+import { IconButton, Input, Button } from '@material-ui/core'
 import VideocamIcon from '@material-ui/icons/Videocam'
 import VideocamOffIcon from '@material-ui/icons/VideocamOff'
 import MicIcon from '@material-ui/icons/Mic'
@@ -107,7 +107,9 @@ const Video = (props) => {
     for (let id in connections) {
       if (id === socketId) continue
 
-      connections[id].addStream(window.localStream)
+      stream.getTracks().forEach((track) => {
+        connections[id].addTrack(track, stream)
+      })
 
       connections[id].createOffer().then((description) => {
         connections[id]
@@ -163,67 +165,67 @@ const Video = (props) => {
     )
   }
 
-  const getDislayMedia = () => {
-    if (screen) {
-      if (navigator.mediaDevices.getDisplayMedia) {
-        navigator.mediaDevices
-          .getDisplayMedia({ video: true, audio: true })
-          .then((stream) => getDislayMediaSuccess(stream))
-          .catch((e) => console.log(e))
-      }
-    }
-  }
+  // const getDislayMedia = () => {
+  //   if (screen) {
+  //     if (navigator.mediaDevices.getDisplayMedia) {
+  //       navigator.mediaDevices
+  //         .getDisplayMedia({ video: true, audio: true })
+  //         .then((stream) => getDislayMediaSuccess(stream))
+  //         .catch((e) => console.log(e))
+  //     }
+  //   }
+  // }
 
-  const getDislayMediaSuccess = (stream) => {
-    try {
-      window.localStream.getTracks().forEach((track) => track.stop())
-    } catch (e) {
-      console.log(e)
-    }
+  // const getDislayMediaSuccess = (stream) => {
+  //   try {
+  //     window.localStream.getTracks().forEach((track) => track.stop())
+  //   } catch (e) {
+  //     console.log(e)
+  //   }
 
-    window.localStream = stream
-    localVideoref.current.srcObject = stream
+  //   window.localStream = stream
+  //   localVideoref.current.srcObject = stream
 
-    for (let id in connections) {
-      if (id === socketId) continue
+  //   for (let id in connections) {
+  //     if (id === socketId) continue
 
-      connections[id].addStream(window.localStream)
+  //     connections[id].addStream(window.localStream)
 
-      connections[id].createOffer().then((description) => {
-        connections[id]
-          .setLocalDescription(description)
-          .then(() => {
-            socket.emit(
-              'signal',
-              id,
-              JSON.stringify({ sdp: connections[id].localDescription })
-            )
-          })
-          .catch((e) => console.log(e))
-      })
-    }
+  //     connections[id].createOffer().then((description) => {
+  //       connections[id]
+  //         .setLocalDescription(description)
+  //         .then(() => {
+  //           socket.emit(
+  //             'signal',
+  //             id,
+  //             JSON.stringify({ sdp: connections[id].localDescription })
+  //           )
+  //         })
+  //         .catch((e) => console.log(e))
+  //     })
+  //   }
 
-    stream.getTracks().forEach(
-      (track) =>
-        (track.onended = () => {
-          setscreen(false)
+  //   stream.getTracks().forEach(
+  //     (track) =>
+  //       (track.onended = () => {
+  //         setscreen(false)
 
-          try {
-            let tracks = localVideoref.current.srcObject.getTracks()
-            tracks.forEach((track) => track.stop())
-          } catch (e) {
-            console.log(e)
-          }
+  //         try {
+  //           let tracks = localVideoref.current.srcObject.getTracks()
+  //           tracks.forEach((track) => track.stop())
+  //         } catch (e) {
+  //           console.log(e)
+  //         }
 
-          let blackSilence = (...args) =>
-            new MediaStream([black(...args), silence()])
-          window.localStream = blackSilence()
-          localVideoref.current.srcObject = window.localStream
+  //         let blackSilence = (...args) =>
+  //           new MediaStream([black(...args), silence()])
+  //         window.localStream = blackSilence()
+  //         localVideoref.current.srcObject = window.localStream
 
-          getUserMedia()
-        })
-    )
-  }
+  //         getUserMedia()
+  //       })
+  //   )
+  // }
 
   console.log(connections)
 
@@ -405,7 +407,7 @@ const Video = (props) => {
 
   const handleScreen = () => {
     setscreen(!screen)
-    getDislayMedia()
+    // getDislayMedia()
   }
 
   const handleEndCall = () => {
@@ -467,16 +469,10 @@ const Video = (props) => {
             {/* VIDEO PREVIEW BEFORE ENTERING ROOM */}
             <video
               id='my-video'
+              className='video-preview'
               ref={localVideoref}
               autoPlay
               muted
-              style={{
-                borderStyle: 'solid',
-                borderColor: '#bdbdbd',
-                objectFit: 'fill',
-                width: '60%',
-                height: '30%',
-              }}
             ></video>
           </div>
         </div>
@@ -525,8 +521,6 @@ const Video = (props) => {
                 autoPlay
                 muted
                 style={{
-                  borderStyle: 'solid',
-                  borderColor: '#bdbdbd',
                   margin: '0',
                   padding: '0',
                   objectFit: 'fill',
