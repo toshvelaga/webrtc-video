@@ -247,14 +247,10 @@ const VideoExample = () => {
     })
   }
 
-  const getMedia = () => {
-    getUserMedia()
-    connectToSocketServer()
-  }
-
   const connect = () => {
     setvideoPreview(false)
-    getMedia()
+    getUserMedia()
+    connectToSocketServer()
   }
 
   return (
