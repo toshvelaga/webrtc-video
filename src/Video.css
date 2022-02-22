@@ -37,7 +37,7 @@ body {
   width: 100vw;
   max-width: 100vw;
   max-height: 100vh;
-
+  margin-top: 30px;
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -67,4 +67,18 @@ body {
   object-fit: fill;
   width: 60%;
   height: 30%;
+}
+
+.video-preview-container {
+  justify-content: center;
+  text-align: center;
+  padding-top: 40px;
+}
+
+.my-video {
+  margin: 0;
+  padding: 0;
+  object-fit: fill;
+  width: 100%;
+  height: 100%;
 }

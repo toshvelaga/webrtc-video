@@ -3,13 +3,13 @@ import io from 'socket.io-client'
 import faker from 'faker'
 
 import { IconButton, Input, Button } from '@material-ui/core'
-import VideocamIcon from '@material-ui/icons/Videocam'
-import VideocamOffIcon from '@material-ui/icons/VideocamOff'
-import MicIcon from '@material-ui/icons/Mic'
-import MicOffIcon from '@material-ui/icons/MicOff'
-import ScreenShareIcon from '@material-ui/icons/ScreenShare'
-import StopScreenShareIcon from '@material-ui/icons/StopScreenShare'
-import CallEndIcon from '@material-ui/icons/CallEnd'
+// import VideocamIcon from '@material-ui/icons/Videocam'
+// import VideocamOffIcon from '@material-ui/icons/VideocamOff'
+// import MicIcon from '@material-ui/icons/Mic'
+// import MicOffIcon from '@material-ui/icons/MicOff'
+// import ScreenShareIcon from '@material-ui/icons/ScreenShare'
+// import StopScreenShareIcon from '@material-ui/icons/StopScreenShare'
+// import CallEndIcon from '@material-ui/icons/CallEnd'
 import { silence, black, changeCssVideos } from './utils'
 
 import { Row } from 'reactstrap'
@@ -29,8 +29,8 @@ const Video = () => {
 
   const [video, setvideo] = useState(true)
   const [audio, setaudio] = useState(true)
-  const [screen, setscreen] = useState(false)
-  const [screenAvailable, setscreenAvailable] = useState(true)
+  // const [screen, setscreen] = useState(false)
+  // const [screenAvailable, setscreenAvailable] = useState(true)
   const [askForUsername, setaskForUsername] = useState(true)
   const [username, setusername] = useState(faker.internet.userName())
   const [iceServers, seticeServers] = useState([])
@@ -280,7 +280,7 @@ const Video = () => {
           video.parentNode.removeChild(video)
 
           let main = document.getElementById('main')
-          // resize the remaining videos height and width
+          // resize the remaining videos height and width after user leaves
           changeCssVideos(main, elms)
         }
       })
@@ -406,13 +406,13 @@ const Video = () => {
   //   // getDislayMedia()
   // }
 
-  const handleEndCall = () => {
-    try {
-      let tracks = localVideoref.current.srcObject.getTracks()
-      tracks.forEach((track) => track.stop())
-    } catch (e) {}
-    window.location.href = '/'
-  }
+  // const handleEndCall = () => {
+  //   try {
+  //     let tracks = localVideoref.current.srcObject.getTracks()
+  //     tracks.forEach((track) => track.stop())
+  //   } catch (e) {}
+  //   window.location.href = '/'
+  // }
 
   return (
     <div>
@@ -434,15 +434,8 @@ const Video = () => {
               Connect
             </Button>
           </div>
-
-          <div
-            style={{
-              justifyContent: 'center',
-              textAlign: 'center',
-              paddingTop: '40px',
-            }}
-          >
-            {/* VIDEO PREVIEW BEFORE ENTERING ROOM */}
+          {/* VIDEO PREVIEW BEFORE ENTERING ROOM */}
+          <div className='video-preview-container'>
             <video
               id='my-video'
               className='video-preview'
@@ -455,12 +448,13 @@ const Video = () => {
       ) : (
         <div>
           {/* VIDEO CONTROLS */}
-          <div className='btn-down'>
+
+          {/* <div className='btn-down'>
             <IconButton style={{ color: '#f44336' }} onClick={handleEndCall}>
               <CallEndIcon />
             </IconButton>
 
-            {/* <IconButton style={{ color: '#424242' }} onClick={handleVideo}>
+            <IconButton style={{ color: '#424242' }} onClick={handleVideo}>
               {video == true ? <VideocamIcon /> : <VideocamOffIcon />}
             </IconButton>
 
@@ -476,13 +470,10 @@ const Video = () => {
                   <StopScreenShareIcon />
                 )}
               </IconButton>
-            ) : null} */}
-          </div>
+            ) : null}
+          </div> */}
 
           <div className='container'>
-            <div style={{ paddingTop: '20px', paddingBottom: '20px' }}>
-              <Input value={window.location.href} disable='true'></Input>
-            </div>
             {/* THE ACTUAL VIDEOS IN THE ROOM */}
             <Row id='main' className='flex-container'>
               <video
@@ -490,13 +481,7 @@ const Video = () => {
                 ref={localVideoref}
                 autoPlay
                 muted
-                style={{
-                  margin: '0',
-                  padding: '0',
-                  objectFit: 'fill',
-                  width: '100%',
-                  height: '100%',
-                }}
+                className='my-video'
               ></video>
             </Row>
           </div>
