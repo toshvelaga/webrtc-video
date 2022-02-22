@@ -60,7 +60,9 @@ const Video = (props) => {
   }, [])
 
   useEffect(() => {
-    getPermissions()
+    if (!window.location.href.includes('ghost')) {
+      getPermissions()
+    }
   }, [])
 
   const getPermissions = async () => {
