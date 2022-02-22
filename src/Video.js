@@ -337,7 +337,10 @@ const Video = () => {
 
           // Add the local video stream
           if (window.localStream !== undefined && window.localStream !== null) {
-            connections[socketListId].addStream(window.localStream)
+            window.localStream.getTracks().forEach(function (track) {
+              connections[socketListId].addTrack(track, window.localStream)
+            })
+            // connections[socketListId].addStream(window.localStream)
           } else {
             let blackSilence = (...args) =>
               new MediaStream([black(...args), silence()])
