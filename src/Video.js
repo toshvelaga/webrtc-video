@@ -48,6 +48,7 @@ const Video = () => {
   }
 
   useEffect(() => {
+    // GETS LIST OF STUN AND TURN SERVERS FROM TWILIO
     axios
       .post(
         'https://us-central1-callapp-9d817.cloudfunctions.net/makeTwilioWebRTC'
