@@ -25,10 +25,8 @@ const server_url =
 
 const Video = () => {
   const localVideoref = useRef(null)
-  const stream = useRef(null)
-
   const [video, setvideo] = useState(true)
-  const [audio, setaudio] = useState(true)
+  // const [audio, setaudio] = useState(true)
   // const [screen, setscreen] = useState(false)
   // const [screenAvailable, setscreenAvailable] = useState(true)
   const [askForUsername, setaskForUsername] = useState(true)
@@ -303,12 +301,11 @@ const Video = () => {
 
           // Wait for their video stream
           connections[socketListId].ontrack = (event) => {
-            var searchVidep = document.querySelector(
+            var searchVideo = document.querySelector(
               `[data-socket="${socketListId}"]`
             )
-            if (searchVidep !== null) {
-              console.log('searchVidep ' + searchVidep)
-              searchVidep.srcObject = event.streams[0]
+            if (searchVideo !== null) {
+              searchVideo.srcObject = event.streams[0]
             } else {
               elms = clients.length
               let main = document.getElementById('main')
@@ -340,7 +337,6 @@ const Video = () => {
             window.localStream.getTracks().forEach(function (track) {
               connections[socketListId].addTrack(track, window.localStream)
             })
-            // connections[socketListId].addStream(window.localStream)
           } else {
             let blackSilence = (...args) =>
               new MediaStream([black(...args), silence()])
@@ -348,7 +344,6 @@ const Video = () => {
             window.localStream.getTracks().forEach(function (track) {
               connections[socketListId].addTrack(track, window.localStream)
             })
-            // connections[socketListId].addStream(window.localStream)
           }
         })
 
@@ -360,7 +355,6 @@ const Video = () => {
               window.localStream.getTracks().forEach(function (track) {
                 connections[id2].addTrack(track, window.localStream)
               })
-              // connections[id2].addStream(window.localStream)
             } catch (e) {}
 
             // eslint-disable-next-line no-loop-func
