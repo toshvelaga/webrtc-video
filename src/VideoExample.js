@@ -71,12 +71,6 @@ const VideoExample = () => {
   }
 
   const getUserMediaSuccess = (stream) => {
-    try {
-      window.localStream.getTracks().forEach((track) => track.stop())
-    } catch (e) {
-      console.log(e)
-    }
-
     streams.push(window.localStream)
     window.localStream = stream
     localVideoref.current.srcObject = stream
@@ -88,6 +82,7 @@ const VideoExample = () => {
         connections[id].addTrack(track, stream)
       })
 
+      // eslint-disable-next-line no-loop-func
       connections[id].createOffer().then((description) => {
         connections[id]
           .setLocalDescription(description)
