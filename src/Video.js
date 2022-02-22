@@ -60,6 +60,7 @@ const Video = () => {
   }, [])
 
   useEffect(() => {
+    // GET USER VIDEO PREVIEW BEFORE ENTERING ROOM IF ghost IS NOT IN QUERY PARAM
     if (!window.location.href.includes('ghost')) {
       getPermissions()
     }
@@ -77,11 +78,6 @@ const Video = () => {
         localVideoref.current.srcObject = stream
       })
       .catch((e) => console.log(e))
-  }
-
-  const getMedia = () => {
-    getUserMedia()
-    connectToSocketServer()
   }
 
   const getUserMedia = () => {
@@ -378,27 +374,37 @@ const Video = () => {
     })
   }
 
-  const handleVideo = () => {
-    console.log('handleVideo')
-    setvideo((prevVideo) => !prevVideo)
-    // getUserMedia()
-    window.localStream = stream
-    localVideoref.current.srcObject.getVideoTracks()[0].enabled =
-      !localVideoref.current.srcObject.getVideoTracks()[0].enabled
+  const getMedia = () => {
+    getUserMedia()
+    connectToSocketServer()
   }
 
-  const handleAudio = () => {
-    console.log('handleAudio')
-    setaudio(!audio)
-    // getUserMedia()
-    localVideoref.current.srcObject.getAudioTracks()[0].enabled =
-      !localVideoref.current.srcObject.getAudioTracks()[0].enabled
+  const connect = () => {
+    setaskForUsername(false)
+    getMedia()
   }
 
-  const handleScreen = () => {
-    setscreen(!screen)
-    // getDislayMedia()
-  }
+  // const handleVideo = () => {
+  //   console.log('handleVideo')
+  //   setvideo((prevVideo) => !prevVideo)
+  //   getUserMedia()
+  //   window.localStream = stream
+  //   localVideoref.current.srcObject.getVideoTracks()[0].enabled =
+  //     !localVideoref.current.srcObject.getVideoTracks()[0].enabled
+  // }
+
+  // const handleAudio = () => {
+  //   console.log('handleAudio')
+  //   setaudio(!audio)
+  //   getUserMedia()
+  //   localVideoref.current.srcObject.getAudioTracks()[0].enabled =
+  //     !localVideoref.current.srcObject.getAudioTracks()[0].enabled
+  // }
+
+  // const handleScreen = () => {
+  //   setscreen(!screen)
+  //   // getDislayMedia()
+  // }
 
   const handleEndCall = () => {
     try {
@@ -406,13 +412,6 @@ const Video = () => {
       tracks.forEach((track) => track.stop())
     } catch (e) {}
     window.location.href = '/'
-  }
-
-  const handleUsername = (e) => setusername(e.target.value)
-
-  const connect = () => {
-    setaskForUsername(false)
-    getMedia()
   }
 
   return (
@@ -424,7 +423,7 @@ const Video = () => {
             <Input
               placeholder='Username'
               value={username}
-              onChange={(e) => handleUsername(e)}
+              onChange={(e) => setusername(e.target.value)}
             />
             <Button
               variant='contained'
@@ -457,12 +456,12 @@ const Video = () => {
         <div>
           {/* VIDEO CONTROLS */}
           <div className='btn-down'>
-            <IconButton style={{ color: '#424242' }} onClick={handleVideo}>
-              {video == true ? <VideocamIcon /> : <VideocamOffIcon />}
-            </IconButton>
-
             <IconButton style={{ color: '#f44336' }} onClick={handleEndCall}>
               <CallEndIcon />
+            </IconButton>
+
+            {/* <IconButton style={{ color: '#424242' }} onClick={handleVideo}>
+              {video == true ? <VideocamIcon /> : <VideocamOffIcon />}
             </IconButton>
 
             <IconButton style={{ color: '#424242' }} onClick={handleAudio}>
@@ -477,7 +476,7 @@ const Video = () => {
                   <StopScreenShareIcon />
                 )}
               </IconButton>
-            ) : null}
+            ) : null} */}
           </div>
 
           <div className='container'>
@@ -485,11 +484,7 @@ const Video = () => {
               <Input value={window.location.href} disable='true'></Input>
             </div>
             {/* THE ACTUAL VIDEOS IN THE ROOM */}
-            <Row
-              id='main'
-              className='flex-container'
-              style={{ margin: 0, padding: 0 }}
-            >
+            <Row id='main' className='flex-container'>
               <video
                 id='my-video'
                 ref={localVideoref}
