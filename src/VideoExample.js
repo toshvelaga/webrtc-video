@@ -82,11 +82,13 @@ const VideoExample = () => {
         connections[id].addTrack(track, stream)
       })
 
+      // Create offers to connect with other users who join room
       // eslint-disable-next-line no-loop-func
       connections[id].createOffer().then((description) => {
         connections[id]
           .setLocalDescription(description)
           .then(() => {
+            // emit local description to other users
             socket.emit(
               'signal',
               id,
@@ -104,7 +106,7 @@ const VideoExample = () => {
     if (fromId !== socketId) {
       if (signal.sdp) {
         connections[fromId]
-          .setRemoteDescription(new RTCSessionDescription(signal.sdp))
+          .setRemoteDescription(signal.sdp)
           .then(() => {
             if (signal.sdp.type === 'offer') {
               connections[fromId]
