@@ -194,7 +194,7 @@ const VideoExample = () => {
             }
           }
 
-          // Add the local video stream
+          // Add the local video stream's tracks
           if (window.localStream !== undefined && window.localStream !== null) {
             window.localStream.getTracks().forEach(function (track) {
               connections[socketListId].addTrack(track, window.localStream)
