@@ -129,7 +129,7 @@ const VideoExample = () => {
     socket.on('connect', () => {
       socket.emit('join-call', window.location.href)
       socketId = socket.id
-
+      console.log('socketId', socketId)
       // REMOVE VIDEO WHEN USER LEAVES
       socket.on('user-left', (id) => {
         let video = document.querySelector(`[data-socket="${id}"]`)
@@ -165,6 +165,7 @@ const VideoExample = () => {
             var searchVideo = document.querySelector(
               `[data-socket="${socketListId}"]`
             )
+            console.log(searchVideo)
             if (searchVideo !== null) {
               searchVideo.srcObject = event.streams[0]
             } else {
@@ -234,6 +235,7 @@ const VideoExample = () => {
   const connect = () => {
     setvideoPreview(false)
     getUserMedia()
+
     connectToSocketServer()
   }
 

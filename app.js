@@ -4,8 +4,14 @@ var cors = require('cors')
 const app = express()
 const bodyParser = require('body-parser')
 const path = require('path')
-
 var server = http.createServer(app)
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(__dirname + '/build'))
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname + '/build/index.html'))
+  })
+}
 
 const io = require('socket.io')(server, {
   cors: {
@@ -15,14 +21,6 @@ const io = require('socket.io')(server, {
 
 app.use(cors())
 app.use(bodyParser.json())
-
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(__dirname + '/build'))
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname + '/build/index.html'))
-  })
-}
-
 app.set('port', process.env.PORT || 4001)
 
 // API route to record webRTC meeting
@@ -54,11 +52,11 @@ io.on('connection', (socket) => {
       connections[editedPath] = []
     }
     // push socket.id into array
-    connections[editedPath].push(socket.id)
+    if (!path.includes('?ghost')) {
+      connections[editedPath].push(socket.id)
 
-    timeOnline[socket.id] = new Date()
-    console.log(timeOnline)
-
+      timeOnline[socket.id] = new Date()
+    }
     // loop over length of array in room which contains users
     for (let a = 0; a < connections[editedPath].length; ++a) {
       // emit to each user
