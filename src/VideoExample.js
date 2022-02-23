@@ -70,6 +70,10 @@ const VideoExample = () => {
         connections[id]
           .setLocalDescription(description)
           .then(() => {
+            console.log(
+              'on getUserMediaSuccess CREATE OFFER SDP (signal): ',
+              JSON.stringify(connections[id].localDescription)
+            )
             // emit local description to other users
             socket.emit(
               'signal',
@@ -97,6 +101,10 @@ const VideoExample = () => {
                   connections[fromId]
                     .setLocalDescription(description)
                     .then(() => {
+                      console.log(
+                        'create answer emit sdp: (signal) ' +
+                          JSON.stringify(connections[fromId].localDescription)
+                      )
                       socket.emit(
                         'signal',
                         fromId,
@@ -152,6 +160,10 @@ const VideoExample = () => {
           // Wait for their ice candidate
           connections[socketListId].onicecandidate = (event) => {
             if (event.candidate != null) {
+              console.log(
+                'ice candidate added (signal): ' +
+                  JSON.stringify(event.candidate)
+              )
               socket.emit(
                 'signal',
                 socketListId,
@@ -218,6 +230,10 @@ const VideoExample = () => {
               connections[id2]
                 .setLocalDescription(description)
                 .then(() => {
+                  console.log(
+                    'create offer emit sdp (signal): ' +
+                      JSON.stringify(connections[id2].localDescription)
+                  )
                   socket.emit(
                     'signal',
                     id2,
@@ -262,13 +278,15 @@ const VideoExample = () => {
           {/* THE ACTUAL VIDEOS IN THE ROOM WITH OTHER CLIENTS */}
           <div className='container'>
             <Row id='main' className='flex-container'>
-              <video
-                id='my-video'
-                ref={localVideoref}
-                autoPlay
-                muted
-                className='my-video'
-              ></video>
+              {!window.location.href.includes('ghost') ? (
+                <video
+                  id='my-video'
+                  ref={localVideoref}
+                  autoPlay
+                  muted
+                  className='my-video'
+                ></video>
+              ) : null}
             </Row>
           </div>
         </>

@@ -52,11 +52,9 @@ io.on('connection', (socket) => {
       connections[editedPath] = []
     }
     // push socket.id into array
-    if (!path.includes('?ghost')) {
-      connections[editedPath].push(socket.id)
+    connections[editedPath].push(socket.id)
+    timeOnline[socket.id] = new Date()
 
-      timeOnline[socket.id] = new Date()
-    }
     // loop over length of array in room which contains users
     for (let a = 0; a < connections[editedPath].length; ++a) {
       // emit to each user
@@ -94,8 +92,6 @@ io.on('connection', (socket) => {
           var index = connections[key].indexOf(socket.id)
           // remove user from room
           connections[key].splice(index, 1)
-
-          console.log(key, socket.id, Math.ceil(diffTime / 1000))
           // delete room if no users are present
           if (connections[key].length === 0) {
             delete connections[key]
