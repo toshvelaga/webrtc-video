@@ -5,19 +5,13 @@ import { changeCssVideos } from './utils'
 import { Row } from 'reactstrap'
 import 'bootstrap/dist/css/bootstrap.css'
 import './Video.css'
-import axios from 'axios'
-
-const server_url =
-  process.env.NODE_ENV === 'production'
-    ? 'https://video-meeting-socket.herokuapp.com'
-    : 'http://localhost:4001'
+import { server_url } from './constants'
 
 const VideoExample = () => {
   const localVideoref = useRef(null)
 
   const [video, setvideo] = useState(true)
   const [videoPreview, setvideoPreview] = useState(true)
-  const [iceServers, seticeServers] = useState([])
   const [streams, setstreams] = useState([])
 
   var connections = {}
@@ -25,20 +19,8 @@ const VideoExample = () => {
   var socketId = null
   var elms = 0
   const peerConnectionConfig = {
-    iceServers: iceServers,
+    iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
   }
-
-  useEffect(() => {
-    // GETS LIST OF STUN AND TURN SERVERS FROM TWILIO
-    axios
-      .post(
-        'https://us-central1-callapp-9d817.cloudfunctions.net/makeTwilioWebRTC'
-      )
-      .then((res) => {
-        seticeServers(res.data.ice_servers)
-      })
-      .catch((err) => console.log(err))
-  }, [])
 
   useEffect(() => {
     // GET USER VIDEO PREVIEW BEFORE ENTERING ROOM IF ghost IS NOT IN QUERY PARAM
@@ -106,7 +88,7 @@ const VideoExample = () => {
     if (fromId !== socketId) {
       if (signal.sdp) {
         connections[fromId]
-          .setRemoteDescription(signal.sdp)
+          .setRemoteDescription(new RTCSessionDescription(signal.sdp))
           .then(() => {
             if (signal.sdp.type === 'offer') {
               connections[fromId]
@@ -130,7 +112,7 @@ const VideoExample = () => {
           })
           .catch((e) => console.log(e))
       }
-
+      // ADD NEW ICE CANDIDATES
       if (signal.ice) {
         connections[fromId]
           .addIceCandidate(new RTCIceCandidate(signal.ice))
