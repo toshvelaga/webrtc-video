@@ -71,7 +71,7 @@ const VideoExample = () => {
           .setLocalDescription(description)
           .then(() => {
             console.log(
-              'on getUserMediaSuccess CREATE OFFER SDP (signal): ',
+              'on getUserMediaSuccess CREATE OFFER SDP (emit signal): ',
               JSON.stringify(connections[id].localDescription)
             )
             // emit local description to other users
@@ -102,7 +102,7 @@ const VideoExample = () => {
                     .setLocalDescription(description)
                     .then(() => {
                       console.log(
-                        'create answer emit sdp: (signal) ' +
+                        'create answer emit sdp: (emit signal) ' +
                           JSON.stringify(connections[fromId].localDescription)
                       )
                       socket.emit(
@@ -161,7 +161,7 @@ const VideoExample = () => {
           connections[socketListId].onicecandidate = (event) => {
             if (event.candidate != null) {
               console.log(
-                'ice candidate added (signal): ' +
+                'ice candidate added (emit signal): ' +
                   JSON.stringify(event.candidate)
               )
               socket.emit(
@@ -231,7 +231,7 @@ const VideoExample = () => {
                 .setLocalDescription(description)
                 .then(() => {
                   console.log(
-                    'create offer emit sdp (signal): ' +
+                    'create offer sdp (emit signal): ' +
                       JSON.stringify(connections[id2].localDescription)
                   )
                   socket.emit(
