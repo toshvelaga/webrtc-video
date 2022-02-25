@@ -65,9 +65,9 @@ const VideoExample = () => {
       // eslint-disable-next-line no-loop-func
       connections[id]
         .createOffer()
-        .then((offer) => {
+        .then(() => {
           const transceiver = connections[id].getTransceivers()[0]
-          console.log(offer.sdp)
+          transceiver.direction = 'recvonly'
           console.log(transceiver.direction)
         })
         .then((description) => {
