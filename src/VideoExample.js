@@ -8,11 +8,9 @@ import './Video.css'
 import { server_url } from './constants'
 
 const VideoExample = () => {
+  const streamRef = useRef(null)
   const localVideoref = useRef(null)
-
-  const [video, setvideo] = useState(true)
   const [videoPreview, setvideoPreview] = useState(true)
-  const [streams, setstreams] = useState([])
 
   var connections = {}
   var socket = null
@@ -36,8 +34,7 @@ const VideoExample = () => {
         audio: true,
       })
       .then((stream) => {
-        streams.push(stream)
-        window.localStream = stream
+        streamRef.current = stream
         localVideoref.current.srcObject = stream
       })
       .catch((e) => console.log(e))
@@ -45,7 +42,7 @@ const VideoExample = () => {
 
   const getUserMedia = () => {
     navigator.mediaDevices
-      .getUserMedia({ video: video, audio: true })
+      .getUserMedia({ video: true, audio: true })
       .then((stream) => {
         getUserMediaSuccess(stream)
       })
@@ -53,8 +50,7 @@ const VideoExample = () => {
   }
 
   const getUserMediaSuccess = (stream) => {
-    streams.push(window.localStream)
-    window.localStream = stream
+    streamRef.current = stream
     localVideoref.current.srcObject = stream
 
     for (let id in connections) {
@@ -62,27 +58,35 @@ const VideoExample = () => {
 
       stream.getTracks().forEach((track) => {
         connections[id].addTrack(track, stream)
+        console.log('get tracks: ' + JSON.stringify(track))
       })
 
       // Create offers to connect with other users who join room
       // eslint-disable-next-line no-loop-func
-      connections[id].createOffer().then((description) => {
-        connections[id]
-          .setLocalDescription(description)
-          .then(() => {
-            console.log(
-              'on getUserMediaSuccess CREATE OFFER SDP (emit signal): ',
-              JSON.stringify(connections[id].localDescription)
-            )
-            // emit local description to other users
-            socket.emit(
-              'signal',
-              id,
-              JSON.stringify({ sdp: connections[id].localDescription })
-            )
-          })
-          .catch((e) => console.log(e))
-      })
+      connections[id]
+        .createOffer()
+        .then((offer) => {
+          const transceiver = connections[id].getTransceivers()[0]
+          console.log(offer.sdp)
+          console.log(transceiver.direction)
+        })
+        .then((description) => {
+          connections[id]
+            .setLocalDescription(description)
+            .then(() => {
+              console.log(
+                'on getUserMediaSuccess CREATE OFFER SDP (emit signal): ',
+                JSON.stringify(connections[id].localDescription)
+              )
+              // emit local description to other users
+              socket.emit(
+                'signal',
+                id,
+                JSON.stringify({ sdp: connections[id].localDescription })
+              )
+            })
+            .catch((e) => console.log(e))
+        })
     }
   }
 
@@ -208,9 +212,10 @@ const VideoExample = () => {
           }
 
           // Add the local video stream's tracks
-          if (window.localStream !== undefined && window.localStream !== null) {
-            window.localStream.getTracks().forEach(function (track) {
-              connections[socketListId].addTrack(track, window.localStream)
+          if (streamRef.current !== undefined && streamRef.current !== null) {
+            streamRef.current.getTracks().forEach(function (track) {
+              connections[socketListId].addTrack(track, streamRef.current)
+              console.log('add tracks: ' + JSON.stringify(track))
             })
           }
         })
@@ -220,8 +225,9 @@ const VideoExample = () => {
             if (id2 === socketId) continue
 
             try {
-              window.localStream.getTracks().forEach(function (track) {
-                connections[id2].addTrack(track, window.localStream)
+              streamRef.current.getTracks().forEach(function (track) {
+                connections[id2].addTrack(track, streamRef.current)
+                console.log('add tracks: ' + JSON.stringify(track))
               })
             } catch (e) {}
 
@@ -278,15 +284,13 @@ const VideoExample = () => {
           {/* THE ACTUAL VIDEOS IN THE ROOM WITH OTHER CLIENTS */}
           <div className='container'>
             <Row id='main' className='flex-container'>
-              {!window.location.href.includes('ghost') ? (
-                <video
-                  id='my-video'
-                  ref={localVideoref}
-                  autoPlay
-                  muted
-                  className='my-video'
-                ></video>
-              ) : null}
+              <video
+                id='my-video'
+                ref={localVideoref}
+                autoPlay
+                muted
+                className='my-video'
+              ></video>
             </Row>
           </div>
         </>
